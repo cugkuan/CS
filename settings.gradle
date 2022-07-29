@@ -13,6 +13,7 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Cs"
+includeBuild("AutoPlugin")
 include ':app'
 include ':cs'
 include ':test1'

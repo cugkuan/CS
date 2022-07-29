@@ -1,0 +1,55 @@
+
+
+plugins {
+    id 'groovy' // Groovy Language
+    id 'java-gradle-plugin' // Java Gradle Plugin
+    id 'maven-publish'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+gradlePlugin {
+    plugins {
+        simplePlugin {
+            id = 'com.cs.auto.inject'
+            implementationClass = 'com.k.plugin.MyFirstPlugin'
+        }
+
+        register("com.cs.auto.inject") {
+            id = 'com.cs.auto.inject'
+            implementationClass = 'com.k.plugin.MyFirstPlugin'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    google()
+
+}
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+    implementation  "com.android.tools.build:gradle:4.2.2"
+    implementation  'org.ow2.asm:asm:9.1'
+    implementation  "org.ow2.asm:asm-commons:9.1"
+}
+
+
+group='com.k.plugin'
+version='1.0.0'
+
+publishing.repositories {
+    maven {
+        credentials {
+            username 'qzdapp'
+            password 'Zhiyun123'
+        }
+        url 'http://maven.qizhidao.net:8081/repository/packages-app/app/android'
+        allowInsecureProtocol true
+    }
+}

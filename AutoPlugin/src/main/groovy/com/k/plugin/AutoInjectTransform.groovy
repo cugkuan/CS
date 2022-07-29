@@ -54,19 +54,19 @@ class AutoInjectTransform extends  Transform{
 
         transformInvocation.getInputs().each { TransformInput input ->
             input.directoryInputs.each { DirectoryInput directoryInput ->
-                def dest = transformInvocation.outputProvider.getContentLocation(directoryInput.name,
-                        directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
-                FileUtils.copyDirectory(directoryInput.file, dest)
-                AutoInjector.findTargetClassInfo(dest)
+
+                AutoInjector.findTargetClassInfo(directoryInput,transformInvocation.outputProvider)
             }
-            if (AutoInjector.targetClassInfo != null){
-                return
-            }
-            input.jarInputs.each { JarInput jarInput ->
-                def dest = transformInvocation.outputProvider.getContentLocation(jarInput.name, jarInput.contentTypes, jarInput.scopes, Format.JAR)
-                FileUtils.copyFile(jarInput.file, dest)
-                AutoInjector.findTargetClassInfo(dest)
-            }
+//            if (AutoInjector.targetClassInfo != null){
+//                return
+//            }
+//            input.jarInputs.each { JarInput jarInput ->
+//                def dest = transformInvocation.outputProvider.getContentLocation(jarInput.name, jarInput.contentTypes, jarInput.scopes, Format.JAR)
+//
+//                AutoInjector.findTargetClassInfo(dest)
+//
+//                FileUtils.copyFile(jarInput.file, dest)
+//            }
         }
 
         AutoInjector.verify()

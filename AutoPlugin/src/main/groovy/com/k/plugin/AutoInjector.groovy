@@ -1,5 +1,9 @@
 package com.k.plugin
 
+import com.android.build.api.transform.DirectoryInput
+import com.android.build.api.transform.Format
+import com.android.build.api.transform.TransformOutputProvider
+import com.android.utils.FileUtils
 import com.k.plugin.vistor.TargetClassVisitor
 import com.k.plugin.vistor.server.ServiceClassVisitor
 import org.objectweb.asm.ClassReader
@@ -105,12 +109,12 @@ class AutoInjector {
     }
 
 
-    static void findTargetClassInfo(File source) {
+    static void findTargetClassInfo(DirectoryInput directoryInput, TransformOutputProvider outputProvider) {
         if (targetClassInfo != null){
             return
         }
-        if (source.isDirectory()) {
-            source.eachFileRecurse { File file ->
+        if (directoryInput.file.isDirectory()) {
+            directoryInput.file.eachFileRecurse { File file ->
                 if (targetClassInfo  != null){
                     return
                 }
@@ -118,8 +122,6 @@ class AutoInjector {
                 if (filterClass(fileName)) {
                     return
                 }
-//                ClassReader classReader = new ClassReader(file.readBytes())
-//                classReader.accept(targetClassVisitor, 0)
                 ClassReader classReader = new ClassReader(file.bytes)
                 ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
 
@@ -131,28 +133,32 @@ class AutoInjector {
                 fos.write(code)
                 fos.close()
             }
+            def dest = outputProvider.getContentLocation(directoryInput.name,
+                    directoryInput.contentTypes, directoryInput.scopes,
+                    Format.DIRECTORY)
+            FileUtils.copyDirectory(directoryInput.file, dest)
         }else {
-            if (targetClassInfo  != null){
-                return
-            }
-            JarFile jarFile = new JarFile(source)
-            Enumeration<JarEntry> entries = jarFile.entries()
-            while (entries.hasMoreElements()) {
-                if (targetClassInfo  != null){
-                    return
-                }
-                JarEntry entry = entries.nextElement()
-                String filename = entry.getName()
-                if (filterPackage(filename)) break
-                if (filterClass(filename)) continue
-                InputStream stream = jarFile.getInputStream(entry)
-                if (stream != null) {
-                    ClassReader classReader = new ClassReader(stream.bytes)
-                    classReader.accept(targetClassVisitor, 0)
-                    stream.close()
-                }
-            }
-            jarFile.close()
+//            if (targetClassInfo  != null){
+//                return
+//            }
+//            JarFile jarFile = new JarFile(source)
+//            Enumeration<JarEntry> entries = jarFile.entries()
+//            while (entries.hasMoreElements()) {
+//                if (targetClassInfo  != null){
+//                    return
+//                }
+//                JarEntry entry = entries.nextElement()
+//                String filename = entry.getName()
+//                if (filterPackage(filename)) break
+//                if (filterClass(filename)) continue
+//                InputStream stream = jarFile.getInputStream(entry)
+//                if (stream != null) {
+//                    ClassReader classReader = new ClassReader(stream.bytes)
+//                    classReader.accept(targetClassVisitor, 0)
+//                    stream.close()
+//                }
+//            }
+//            jarFile.close()
         }
     }
 

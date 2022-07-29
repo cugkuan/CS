@@ -11,6 +11,7 @@ class MyFirstPlugin implements Plugin<Project> {
     void apply(Project project) {
         Logger.project = project
         def isApp = project.plugins.hasPlugin(AppPlugin)
+        Logger.error("---------")
         if (!isApp) {
             return
         }

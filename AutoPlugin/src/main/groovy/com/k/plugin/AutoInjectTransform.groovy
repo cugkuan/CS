@@ -7,16 +7,15 @@ import com.k.plugin.AutoInjector
 import org.gradle.api.Project
 import org.gradle.internal.impldep.org.eclipse.jgit.annotations.NonNull
 
-class AutoInjectTransform extends  Transform{
+class AutoInjectTransform extends Transform {
 
 
     private Project project
 
 
-    AutoInjectTransform(Project project){
+    AutoInjectTransform(Project project) {
         this.project = project
     }
-
 
 
     @Override
@@ -43,33 +42,41 @@ class AutoInjectTransform extends  Transform{
     @Override
     void transform(@NonNull TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         Logger.error("transform开始工作----${project.name}")
-        transformInvocation.getInputs().each {TransformInput transformInput ->
+
+
+        Collection<TransformInput> inputs = transformInvocation.inputs
+        TransformOutputProvider outputProvider = transformInvocation.outputProvider
+        //删除之前的输出
+        if (outputProvider != null) {
+            outputProvider.deleteAll()
+        }
+        //查找服务组件
+        inputs.each { TransformInput transformInput ->
             transformInput.directoryInputs.each { DirectoryInput directoryInput ->
                 AutoInjector.findServiceClassInfo(directoryInput.file)
             }
-            transformInput.getJarInputs().each { JarInput jarInput ->
+            transformInput.jarInputs.each { JarInput jarInput ->
                 AutoInjector.findServiceClassInfo(jarInput.file)
             }
         }
+        Logger.error("transform 服务组件遍历完成")
+        // 将服务进行自动注册
+        inputs.each { TransformInput transformInput ->
+            transformInput.directoryInputs.each { DirectoryInput directoryInput ->
 
-        transformInvocation.getInputs().each { TransformInput input ->
-            input.directoryInputs.each { DirectoryInput directoryInput ->
-
-                AutoInjector.findTargetClassInfo(directoryInput,transformInvocation.outputProvider)
+                AutoInjector.registerTargetClassInfo(directoryInput.file)
+                //下面的代码必须存在
+                def dest = transformInvocation.outputProvider.getContentLocation(directoryInput.name,
+                        directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY)
+                FileUtils.copyDirectory(directoryInput.file, dest)
             }
-//            if (AutoInjector.targetClassInfo != null){
-//                return
-//            }
-//            input.jarInputs.each { JarInput jarInput ->
-//                def dest = transformInvocation.outputProvider.getContentLocation(jarInput.name, jarInput.contentTypes, jarInput.scopes, Format.JAR)
-//
-//                AutoInjector.findTargetClassInfo(dest)
-//
-//                FileUtils.copyFile(jarInput.file, dest)
-//            }
+            transformInput.jarInputs.each { JarInput jarInput ->
+                  AutoInjector.registerTargetClassInfo(jarInput.file)
+                // 下面的代码必须存在
+                def dest = transformInvocation.outputProvider.getContentLocation(jarInput.name, jarInput.contentTypes, jarInput.scopes, Format.JAR)
+                FileUtils.copyFile(jarInput.file, dest)
+            }
         }
-
-        AutoInjector.verify()
-
+        Logger.error("transform 组件注册完成")
     }
 }

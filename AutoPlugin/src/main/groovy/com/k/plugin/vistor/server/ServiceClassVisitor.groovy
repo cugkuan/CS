@@ -3,11 +3,13 @@ package com.k.plugin.vistor.server
 
 import com.k.plugin.AutoInjector
 import com.k.plugin.CsServiceClassInfo
+import com.k.plugin.Logger
 import com.k.plugin.vistor.OnAnnotationValueListener
 import org.apache.http.util.TextUtils
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
+import sun.rmi.runtime.Log
 
 class ServiceClassVisitor extends ClassVisitor {
 
@@ -40,12 +42,12 @@ class ServiceClassVisitor extends ClassVisitor {
                         }
                         if (csServiceClassInfo == null) {
                             csServiceClassInfo = new CsServiceClassInfo(className, value)
+                            Logger.error("csService --> ${csServiceClassInfo.className} -- ${csServiceClassInfo.url} ")
                         }
                     }
                 }
             }
-            ServiceAnnotationVisitor annotationVisitor = new ServiceAnnotationVisitor(listener)
-            return annotationVisitor
+            return  new ServiceAnnotationVisitor(listener)
         } else {
             return super.visitAnnotation(descriptor, visible)
         }

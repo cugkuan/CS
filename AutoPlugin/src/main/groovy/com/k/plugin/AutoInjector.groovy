@@ -1,13 +1,9 @@
 package com.k.plugin
 
-import com.android.build.api.transform.DirectoryInput
-import com.android.build.api.transform.Format
-import com.android.build.api.transform.TransformOutputProvider
-import com.android.utils.FileUtils
+
 import com.k.plugin.vistor.TargetClassVisitor
 import com.k.plugin.vistor.server.ServiceClassVisitor
 import org.objectweb.asm.ClassReader
-import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
 
 import java.util.jar.JarEntry
@@ -32,8 +28,6 @@ class AutoInjector {
     public static final String AUTO_REGISTER_TARGET = "Lcom/cugkuan/cs/core/annotation/AutoRegisterTarget;"
 
 
-
-
     public static String[] ignorePackages
     public static TargetClassInfo targetClassInfo
     public static List<CsServiceClassInfo> csServiceClassInfoList = new ArrayList<>()
@@ -47,17 +41,18 @@ class AutoInjector {
         csServiceClassInfoList.clear()
     }
 
-    static verify(){
-        if (targetClassInfo == null){
+    static verify() {
+        if (targetClassInfo == null) {
             Logger.error("没有找到对应的注入地方")
-        }else {
+        } else {
             Logger.error("target ---->${targetClassInfo.className} -- ${targetClassInfo.method}")
 
         }
-        csServiceClassInfoList.forEach{ CsServiceClassInfo classInfo ->
+        csServiceClassInfoList.forEach { CsServiceClassInfo classInfo ->
             Logger.error("service ---> ${classInfo.className} -- ${classInfo.url} -- ${classInfo.urlKey}")
         }
     }
+
 
     static boolean filterClass(String filename) {
         if (!filename.endsWith(".class")
@@ -78,8 +73,11 @@ class AutoInjector {
         }
         return false
     }
-
-    static void findServiceClassInfo(File source){
+    /**
+     * 找到关联的服务对象
+     * @param source
+     */
+    static void findServiceClassInfo(File source) {
         if (source.isDirectory()) {
             source.eachFileRecurse { File file ->
                 String fileName = file.getName()
@@ -87,9 +85,9 @@ class AutoInjector {
                     return
                 }
                 ClassReader classReader = new ClassReader(file.readBytes())
-                classReader.accept(serviceClassVisitor,0)
+                classReader.accept(serviceClassVisitor, 0)
             }
-        }else {
+        } else {
             JarFile jarFile = new JarFile(source)
             Enumeration<JarEntry> entries = jarFile.entries()
             while (entries.hasMoreElements()) {
@@ -100,7 +98,7 @@ class AutoInjector {
                 InputStream stream = jarFile.getInputStream(entry)
                 if (stream != null) {
                     ClassReader classReader = new ClassReader(stream.bytes)
-                    classReader.accept(serviceClassVisitor,0)
+                    classReader.accept(serviceClassVisitor, 0)
                     stream.close()
                 }
             }
@@ -109,13 +107,13 @@ class AutoInjector {
     }
 
 
-    static void findTargetClassInfo(DirectoryInput directoryInput, TransformOutputProvider outputProvider) {
-        if (targetClassInfo != null){
+    static void registerTargetClassInfo(File source) {
+        if (targetClassInfo != null) {
             return
         }
-        if (directoryInput.file.isDirectory()) {
-            directoryInput.file.eachFileRecurse { File file ->
-                if (targetClassInfo  != null){
+        if (source.isDirectory()) {
+            source.eachFileRecurse { File file ->
+                if (targetClassInfo != null) {
                     return
                 }
                 String fileName = file.getName()
@@ -133,32 +131,30 @@ class AutoInjector {
                 fos.write(code)
                 fos.close()
             }
-            def dest = outputProvider.getContentLocation(directoryInput.name,
-                    directoryInput.contentTypes, directoryInput.scopes,
-                    Format.DIRECTORY)
-            FileUtils.copyDirectory(directoryInput.file, dest)
-        }else {
-//            if (targetClassInfo  != null){
-//                return
-//            }
-//            JarFile jarFile = new JarFile(source)
-//            Enumeration<JarEntry> entries = jarFile.entries()
-//            while (entries.hasMoreElements()) {
-//                if (targetClassInfo  != null){
-//                    return
-//                }
-//                JarEntry entry = entries.nextElement()
-//                String filename = entry.getName()
-//                if (filterPackage(filename)) break
-//                if (filterClass(filename)) continue
-//                InputStream stream = jarFile.getInputStream(entry)
-//                if (stream != null) {
-//                    ClassReader classReader = new ClassReader(stream.bytes)
-//                    classReader.accept(targetClassVisitor, 0)
-//                    stream.close()
-//                }
-//            }
-//            jarFile.close()
+        } else {
+            if (targetClassInfo != null) {
+                return
+            }
+
+            JarFile jarFile = new JarFile(source)
+            Enumeration<JarEntry> entries = jarFile.entries()
+            while (entries.hasMoreElements()) {
+                if (targetClassInfo != null) {
+                    return
+                }
+                JarEntry entry = entries.nextElement()
+                String filename = entry.getName()
+                if (filterPackage(filename)) break
+                if (filterClass(filename)) continue
+                InputStream stream = jarFile.getInputStream(entry)
+                if (stream != null) {
+                    ClassReader classReader = new ClassReader(stream.bytes)
+                    classReader.accept(targetClassVisitor, 0)
+                    stream.close()
+                }
+            }
+            jarFile.close()
+
         }
     }
 

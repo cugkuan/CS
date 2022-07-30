@@ -16,6 +16,7 @@ class MyFirstPlugin implements Plugin<Project> {
             return
         }
         Logger.error("插件开始工作")
+        AutoInjector.clear()
         def android = project.extensions.getByType(AppExtension)
         android.registerTransform(new AutoInjectTransform(project))
 

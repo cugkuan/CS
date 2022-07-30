@@ -9,8 +9,16 @@ import org.objectweb.asm.Opcodes
 class TargetClassVisitor extends ClassVisitor {
     private String className
     private String signature
-     public  TargetClassVisitor(ClassWriter writer) {
-        super(Opcodes.ASM6,writer)
+
+    private OnInjectListener onInjectListener
+
+    public TargetClassVisitor(ClassWriter writer) {
+        super(Opcodes.ASM6, writer)
+    }
+
+
+    void setOnInjectListener(OnInjectListener listener){
+        onInjectListener = listener
     }
 
 
@@ -20,10 +28,12 @@ class TargetClassVisitor extends ClassVisitor {
         className = name
         this.signature = signature
     }
+
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
         MethodVisitor methodVisitor = super.visitMethod(access, name, descriptor, signature, exceptions)
-        TargetMethodVisitor targetMethodVisitor = new TargetMethodVisitor(methodVisitor,access,name,descriptor)
-        return  targetMethodVisitor
+        TargetMethodVisitor targetMethodVisitor = new TargetMethodVisitor(methodVisitor, access, name, descriptor)
+        targetMethodVisitor.setOnInjectListener(onInjectListener)
+        return targetMethodVisitor
     }
 }

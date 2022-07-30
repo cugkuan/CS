@@ -11,16 +11,28 @@ import org.objectweb.asm.commons.AdviceAdapter
 class TargetMethodVisitor extends AdviceAdapter{
 
     private boolean needInject = false
+    private OnInjectListener onInjectListener
+
+    private String name;
+
     public TargetMethodVisitor(MethodVisitor methodVisitor,int access,String name,String descriptor) {
         super(Opcodes.ASM6, methodVisitor,access,name,descriptor)
+        this.name = name
     }
+
+    void setOnInjectListener(OnInjectListener listener){
+        onInjectListener = listener
+    }
+
 
     @Override
     public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
         if (descriptor == AutoInjector.AUTO_REGISTER_TARGET) {
-            TargetClassInfo targetClassInfo = new TargetClassInfo()
-            AutoInjector.targetClassInfo = targetClassInfo
             needInject = true
+            if (onInjectListener != null){
+                onInjectListener.inject()
+                Logger.error("CsAutoInject将代码注入----> ${this.name}")
+            }
         }
         return super.visitAnnotation(descriptor, visible);
     }

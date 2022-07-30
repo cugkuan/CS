@@ -23,6 +23,5 @@ public class App extends Application {
 
     @AutoRegisterTarget
     public void autoRegister(){
-        Log.e("lmk","a");
     }
 }

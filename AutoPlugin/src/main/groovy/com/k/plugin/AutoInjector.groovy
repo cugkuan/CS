@@ -31,8 +31,6 @@ class AutoInjector {
     public static String[] ignorePackages
     public static TargetClassInfo targetClassInfo
     public static List<CsServiceClassInfo> csServiceClassInfoList = new ArrayList<>()
-    public static TargetClassVisitor targetClassVisitor = new TargetClassVisitor()
-
     public static ServiceClassVisitor serviceClassVisitor = new ServiceClassVisitor()
 
 
@@ -121,39 +119,39 @@ class AutoInjector {
                     return
                 }
                 ClassReader classReader = new ClassReader(file.bytes)
-                ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
+                ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS)
 
-                targetClassVisitor.set(classWriter)
-                classReader.accept(targetClassVisitor, 0)
+                TargetClassVisitor targetClassVisitor = new TargetClassVisitor(classWriter)
+                classReader.accept(targetClassVisitor, ClassReader.EXPAND_FRAMES)
                 byte[] code = classWriter.toByteArray()
-                FileOutputStream fos = new FileOutputStream(
-                        file.parentFile.absolutePath + File.separator + name)
+                FileOutputStream fos = new FileOutputStream(file)
+
                 fos.write(code)
                 fos.close()
             }
         } else {
-            if (targetClassInfo != null) {
-                return
-            }
-
-            JarFile jarFile = new JarFile(source)
-            Enumeration<JarEntry> entries = jarFile.entries()
-            while (entries.hasMoreElements()) {
-                if (targetClassInfo != null) {
-                    return
-                }
-                JarEntry entry = entries.nextElement()
-                String filename = entry.getName()
-                if (filterPackage(filename)) break
-                if (filterClass(filename)) continue
-                InputStream stream = jarFile.getInputStream(entry)
-                if (stream != null) {
-                    ClassReader classReader = new ClassReader(stream.bytes)
-                    classReader.accept(targetClassVisitor, 0)
-                    stream.close()
-                }
-            }
-            jarFile.close()
+//            if (targetClassInfo != null) {
+//                return
+//            }
+//
+//            JarFile jarFile = new JarFile(source)
+//            Enumeration<JarEntry> entries = jarFile.entries()
+//            while (entries.hasMoreElements()) {
+//                if (targetClassInfo != null) {
+//                    return
+//                }
+//                JarEntry entry = entries.nextElement()
+//                String filename = entry.getName()
+//                if (filterPackage(filename)) break
+//                if (filterClass(filename)) continue
+//                InputStream stream = jarFile.getInputStream(entry)
+//                if (stream != null) {
+//                    ClassReader classReader = new ClassReader(stream.bytes)
+//                    classReader.accept(targetClassVisitor, 0)
+//                    stream.close()
+//                }
+//            }
+//            jarFile.close()
 
         }
     }

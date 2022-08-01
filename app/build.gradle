@@ -3,6 +3,10 @@ plugins {
     id 'com.cs.auto.inject'
 }
 
+csConfig  {
+    scanPackages = ['com/demo']
+}
+
 android {
     compileSdk 32
 

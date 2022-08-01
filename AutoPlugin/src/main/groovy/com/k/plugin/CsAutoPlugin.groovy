@@ -5,25 +5,29 @@ import com.android.build.gradle.AppPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-class MyFirstPlugin implements Plugin<Project> {
+class CsAutoPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
         Logger.project = project
         def isApp = project.plugins.hasPlugin(AppPlugin)
-        Logger.error("---------")
         if (!isApp) {
             return
         }
-        Logger.error("插件开始工作")
+        Logger.error("CS自动注册插件开始工作")
+        project.extensions.create("csConfig",CsConfig.class)
         AutoInjector.clear()
         def android = project.extensions.getByType(AppExtension)
         android.registerTransform(new AutoInjectTransform(project))
 
         project.afterEvaluate {
-            println("配置完成")
-
             AutoInjector.ignorePackages = ['android','com/google','org','androidx','kotlin',"Lorg"]
+
+
+            AutoInjector.scanPackages =  project.csConfig.scanPackages
+
+
+            Logger.error( "尺寸大小${AutoInjector.scanPackages.size()}")
         }
 
 

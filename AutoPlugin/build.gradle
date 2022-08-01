@@ -15,12 +15,12 @@ gradlePlugin {
     plugins {
         simplePlugin {
             id = 'com.cs.auto.inject'
-            implementationClass = 'com.k.plugin.MyFirstPlugin'
+            implementationClass = 'com.k.plugin.CsAutoPlugin'
         }
 
         register("com.cs.auto.inject") {
             id = 'com.cs.auto.inject'
-            implementationClass = 'com.k.plugin.MyFirstPlugin'
+            implementationClass = 'com.k.plugin.CsAutoPlugin'
         }
     }
 }

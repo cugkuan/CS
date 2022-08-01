@@ -5,6 +5,7 @@ import com.k.plugin.vistor.TargetClassVisitor
 import com.k.plugin.vistor.server.ServiceClassVisitor
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
+import sun.rmi.runtime.Log
 
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -31,6 +32,7 @@ class AutoInjector {
 
 
     public static String[] ignorePackages
+    public static String[] scanPackages
     public static List<CsServiceClassInfo> csServiceClassInfoList = new ArrayList<>()
     public static ServiceClassVisitor serviceClassVisitor = new ServiceClassVisitor()
 
@@ -55,13 +57,22 @@ class AutoInjector {
     }
 
     public static boolean filterPackage(String filename) {
-        if (ignorePackages == null) return false
-        for (int i = 0; i < ignorePackages.size(); i++) {
-            if (filename.startsWith(ignorePackages[i])) {
-                return true
+        if (scanPackages  == null) {
+            if (ignorePackages == null) return false
+            for (int i = 0; i < ignorePackages.size(); i++) {
+                if (filename.startsWith(ignorePackages[i])) {
+                    return true
+                }
             }
+            return false
+        }else {
+            scanPackages.each {name ->
+                if (filename.startsWith(name)){
+                    return  false
+                }
+            }
+            return true
         }
-        return false
     }
     /**
      * 找到关联的服务对象

@@ -13,8 +13,10 @@ public class CS {
     public static int CS_CODE_SUCCEED = 0;
     public static int CS_CODE_NOT_FIND = 404;
 
-    public static void register(String key, Class<? extends CsService> c){
-        ComponentServiceManger.register(key,c);
+
+
+    public static void register(String key, String className){
+        ComponentServiceManger.register(key,className);
     }
     public static UriRespond startUri(Context context, Uri uri){
         return new UriRequest(context,uri).connect();

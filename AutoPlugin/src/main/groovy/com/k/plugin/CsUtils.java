@@ -1,7 +1,12 @@
-package com.cugkuan.cs.core;
+package com.k.plugin;
 
-import android.net.Uri;
 
+import java.net.URI;
+
+/**
+ * 这是生成的key 的规则 是 Java的 URI;需要特别的注意
+ * 这里的规则和 cs 中的逻辑保持一致，需要特别的注意
+ */
 public class CsUtils {
 
 
@@ -13,7 +18,7 @@ public class CsUtils {
         }
     }
 
-    public static String getKey(Uri uri) {
+    public static String getKey(URI uri) {
         return new StringBuilder()
                 .append(checkNull(uri.getScheme()))
                 .append("-")
@@ -23,6 +28,6 @@ public class CsUtils {
     }
 
     public static String getKey(String url) {
-        return getKey(Uri.parse(url));
+        return getKey(URI.create(url));
     }
 }

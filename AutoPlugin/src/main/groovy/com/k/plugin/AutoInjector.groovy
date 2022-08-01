@@ -23,7 +23,7 @@ class AutoInjector {
     /**
      * 继承的服务
      */
-    public static String SERVICE_CS_CLASS = "com/cugkuan/cs/core/CService"
+    public static String SERVICE_CS_CLASS = "com/cugkuan/cs/core/CsService"
     /**
      * 自动注入的目标
      */

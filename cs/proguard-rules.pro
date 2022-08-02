@@ -19,3 +19,11 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep @interface com.brightk.cs.cor.annotation.CsUri
+-keep @interface com.brightk.cs.core.AutoRegisterTarget
+
+# 需要通过反射来找到服务，创建服务
+-keep class * implements com.brightk.cs.core.CsService
+
+

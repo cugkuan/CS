@@ -12,24 +12,27 @@ public class UriRespond {
     @Nullable
     public final Throwable throwable;
 
-    public UriRespond(int code){
-        this(code,null,null);
+    public UriRespond(int code) {
+        this(code, null, null);
     }
-    public UriRespond(Object data){
-        this(CS.CS_CODE_SUCCEED,data,null);
+
+    public UriRespond(Object data) {
+        this(CS.CS_CODE_SUCCEED, data, null);
     }
-    public UriRespond(int code,@Nullable Object data){
-        this(code,data,null);
+
+    public UriRespond(int code, @Nullable Object data) {
+        this(code, data, null);
     }
-    public UriRespond(int code,Throwable throwable){
-        this(code,null,throwable);
+
+    public UriRespond(int code, Throwable throwable) {
+        this(code, null, throwable);
     }
+
     public UriRespond(int code, @Nullable Object data, @Nullable Throwable throwable) {
         this.code = code;
         this.data = data;
         this.throwable = throwable;
     }
-
 
 
 }

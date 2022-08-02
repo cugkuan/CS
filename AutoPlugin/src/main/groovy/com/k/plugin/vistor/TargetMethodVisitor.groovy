@@ -12,18 +12,15 @@ class TargetMethodVisitor extends AdviceAdapter {
 
     private boolean needInject = false
     private OnInjectListener onInjectListener
-
-    private String name;
+    private String name
 
     public TargetMethodVisitor(MethodVisitor methodVisitor, int access, String name, String descriptor) {
         super(Opcodes.ASM6, methodVisitor, access, name, descriptor)
         this.name = name
     }
-
     void setOnInjectListener(OnInjectListener listener) {
         onInjectListener = listener
     }
-
 
     @Override
     public AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
@@ -41,7 +38,6 @@ class TargetMethodVisitor extends AdviceAdapter {
     protected void onMethodExit(int opcode) {
         super.onMethodExit(opcode)
         if (needInject) {
-            // Log.e("lmk","a")
             Logger.error("服务的个数:${AutoInjector.csServiceClassInfoList.size()}")
             mv.visitCode()
             for (int i = 0; i < AutoInjector.csServiceClassInfoList.size(); i++) {

@@ -5,7 +5,6 @@ import com.k.plugin.vistor.TargetClassVisitor
 import com.k.plugin.vistor.server.ServiceClassVisitor
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
-import sun.rmi.runtime.Log
 
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -67,11 +66,13 @@ class AutoInjector {
             return false
         }else {
             scanPackages.each {name ->
+                Logger.error(filename)
+                Logger.error(""+filename.startsWith(name))
                 if (filename.startsWith(name)){
-                    return  false
+                    return  true
                 }
             }
-            return true
+            return false
         }
     }
     /**
@@ -94,7 +95,7 @@ class AutoInjector {
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement()
                 String filename = entry.getName()
-                if (filterPackage(filename)) break
+                if (filterPackage(filename)) continue
                 if (filterClass(filename)) continue
                 InputStream stream = jarFile.getInputStream(entry)
                 if (stream != null) {
@@ -175,7 +176,7 @@ class AutoInjector {
                 JarEntry jarEntry = jarEntryEnumeration.nextElement()
                 String filename = jarEntry.getName()
                 if (filterPackage(filename)) {
-                    break
+                    continue
                 }
                 if (filterClass(filename)) {
                     continue

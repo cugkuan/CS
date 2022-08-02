@@ -22,12 +22,7 @@ class CsAutoPlugin implements Plugin<Project> {
 
         project.afterEvaluate {
             AutoInjector.ignorePackages = ['android','com/google','org','androidx','kotlin',"Lorg"]
-
-
             AutoInjector.scanPackages =  project.csConfig.scanPackages
-
-
-            Logger.error( "尺寸大小${AutoInjector.scanPackages.size()}")
         }
 
 

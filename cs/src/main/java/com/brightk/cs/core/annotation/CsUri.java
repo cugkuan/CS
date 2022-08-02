@@ -1,4 +1,4 @@
-package com.cugkuan.cs.core.annotation;
+package com.brightk.cs.core.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

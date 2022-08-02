@@ -1,4 +1,4 @@
-package com.cugkuan.cs.core;
+package com.brightk.cs.core;
 
 public interface CsService {
 

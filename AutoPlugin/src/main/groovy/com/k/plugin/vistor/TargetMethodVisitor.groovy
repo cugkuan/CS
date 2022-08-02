@@ -48,7 +48,7 @@ class TargetMethodVisitor extends AdviceAdapter {
                 mv.visitVarInsn(ASTORE, 2)
                 mv.visitVarInsn(ALOAD, 1)
                 mv.visitVarInsn(ALOAD, 2)
-                mv.visitMethodInsn(INVOKESTATIC, "com/cugkuan/cs/CS", "register", "(Ljava/lang/String;Ljava/lang/String;)V", false)
+                mv.visitMethodInsn(INVOKESTATIC, "com/brightk/cs/CS", "register", "(Ljava/lang/String;Ljava/lang/String;)V", false)
             }
 
             mv.visitInsn(RETURN);

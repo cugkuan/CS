@@ -13,13 +13,8 @@ java {
 
 gradlePlugin {
     plugins {
-        simplePlugin {
-            id = 'com.cs.auto.inject'
-            implementationClass = 'com.k.plugin.CsAutoPlugin'
-        }
-
-        register("com.cs.auto.inject") {
-            id = 'com.cs.auto.inject'
+        register("cs-plgin") {
+            id = 'com.brightk.cs'
             implementationClass = 'com.k.plugin.CsAutoPlugin'
         }
     }
@@ -40,16 +35,25 @@ dependencies {
 }
 
 
-group='com.k.plugin'
-version='1.0.0'
-
 publishing.repositories {
     maven {
+        // 配置地址
         credentials {
             username 'qzdapp'
             password 'Zhiyun123'
         }
         url 'http://maven.qizhidao.net:8081/repository/packages-app/app/android'
         allowInsecureProtocol true
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.brightk.cs'
+            artifactId = 'cs-plguin'
+            version = '0.0.1'
+            from components.java
+        }
     }
 }

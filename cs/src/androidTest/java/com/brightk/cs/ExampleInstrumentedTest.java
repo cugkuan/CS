@@ -1,4 +1,4 @@
-package com.cugkuan.cs;
+package com.brightk.cs;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.cugkuan.cs.test", appContext.getPackageName());
+        assertEquals("com.cugkuan.com.brightk.cs.test", appContext.getPackageName());
     }
 }

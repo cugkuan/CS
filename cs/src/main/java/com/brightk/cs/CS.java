@@ -1,12 +1,11 @@
-package com.cugkuan.cs;
+package com.brightk.cs;
 
 import android.content.Context;
 import android.net.Uri;
 
-import com.cugkuan.cs.core.ComponentServiceManger;
-import com.cugkuan.cs.core.CsService;
-import com.cugkuan.cs.core.UriRequest;
-import com.cugkuan.cs.core.UriRespond;
+import com.brightk.cs.core.ComponentServiceManger;
+import com.brightk.cs.core.UriRequest;
+import com.brightk.cs.core.UriRespond;
 
 public class CS {
 

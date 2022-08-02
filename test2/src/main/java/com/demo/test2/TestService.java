@@ -1,9 +1,9 @@
 package com.demo.test2;
 
-import com.cugkuan.cs.core.CsService;
-import com.cugkuan.cs.core.UriRequest;
-import com.cugkuan.cs.core.UriRespond;
-import com.cugkuan.cs.core.annotation.CsUri;
+import com.brightk.cs.core.CsService;
+import com.brightk.cs.core.UriRequest;
+import com.brightk.cs.core.UriRespond;
+import com.brightk.cs.core.annotation.CsUri;
 
 @CsUri(uri = "app://app2/service1")
 public class TestService implements CsService {

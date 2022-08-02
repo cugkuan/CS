@@ -1,4 +1,4 @@
-package com.cugkuan.cs;
+package com.brightk.cs;
 
 import org.junit.Test;
 

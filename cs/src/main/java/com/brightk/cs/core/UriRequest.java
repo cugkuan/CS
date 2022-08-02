@@ -1,9 +1,9 @@
-package com.cugkuan.cs.core;
+package com.brightk.cs.core;
 
 import android.content.Context;
 import android.net.Uri;
 
-import com.cugkuan.cs.CS;
+import com.brightk.cs.CS;
 
 public class UriRequest {
 

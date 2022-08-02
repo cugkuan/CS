@@ -1,15 +1,8 @@
 package com.demo.app;
 
 import android.app.Application;
-import android.util.Log;
 
-import com.cugkuan.cs.CS;
-import com.cugkuan.cs.core.CsUtils;
-import com.cugkuan.cs.core.annotation.AutoRegisterTarget;
-import com.demo.test2.TestService;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.brightk.cs.core.annotation.AutoRegisterTarget;
 
 public class App extends Application {
 

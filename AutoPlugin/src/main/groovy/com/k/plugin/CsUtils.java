@@ -5,7 +5,7 @@ import java.net.URI;
 
 /**
  * 这是生成的key 的规则 是 Java的 URI;需要特别的注意
- * 这里的规则和 cs 中的逻辑保持一致，需要特别的注意
+ * 这里的规则和 com.brightk.cs 中的逻辑保持一致，需要特别的注意
  */
 public class CsUtils {
 

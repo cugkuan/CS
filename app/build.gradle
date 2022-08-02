@@ -1,6 +1,6 @@
 plugins {
     id 'com.android.application'
-    id 'com.cs.auto.inject'
+    id 'com.brightk.cs'
 }
 
 csConfig  {

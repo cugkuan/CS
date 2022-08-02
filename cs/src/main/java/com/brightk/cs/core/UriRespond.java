@@ -1,8 +1,8 @@
-package com.cugkuan.cs.core;
+package com.brightk.cs.core;
 
 import androidx.annotation.Nullable;
 
-import com.cugkuan.cs.CS;
+import com.brightk.cs.CS;
 
 public class UriRespond {
 

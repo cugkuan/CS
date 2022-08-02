@@ -15,7 +15,7 @@ class AutoInjector {
     /**
      * 服务地址的配置注解
      */
-    public static String SERVICE_CS_URI = "Lcom/cugkuan/cs/core/annotation/CsUri;"
+    public static String SERVICE_CS_URI = "Lcom/brightk/cs/core/annotation/CsUri;"
     /**
      * 服务注解配置的uri
      */
@@ -23,11 +23,11 @@ class AutoInjector {
     /**
      * 继承的服务
      */
-    public static String SERVICE_CS_CLASS = "com/cugkuan/cs/core/CsService"
+    public static String SERVICE_CS_CLASS = "com/brightk/cs/core/CsService"
     /**
      * 自动注入的目标
      */
-    public static final String AUTO_REGISTER_TARGET = "Lcom/cugkuan/cs/core/annotation/AutoRegisterTarget;"
+    public static final String AUTO_REGISTER_TARGET = "Lcom/brightk/cs/core/annotation/AutoRegisterTarget;"
 
 
     public static String[] ignorePackages
@@ -55,7 +55,7 @@ class AutoInjector {
         return false
     }
 
-    public static boolean filterPackage(String filename) {
+    static boolean filterPackage(String filename) {
         if (scanPackages  == null) {
             if (ignorePackages == null) return false
             for (int i = 0; i < ignorePackages.size(); i++) {
@@ -66,8 +66,6 @@ class AutoInjector {
             return false
         }else {
             scanPackages.each {name ->
-                Logger.error(filename)
-                Logger.error(""+filename.startsWith(name))
                 if (filename.startsWith(name)){
                     return  true
                 }

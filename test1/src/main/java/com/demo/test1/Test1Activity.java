@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.cugkuan.cs.CS;
+import com.brightk.cs.CS;
 
 public class Test1Activity extends AppCompatActivity {
 

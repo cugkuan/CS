@@ -2,38 +2,48 @@ package com.brightk.cs;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Binder;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.os.Parcelable;
-import android.util.Size;
-import android.util.SizeF;
-import android.util.SparseArray;
 
-import com.brightk.cs.common.CsNotSupportParamsException;
 import com.brightk.cs.core.ComponentServiceManger;
+import com.brightk.cs.core.CsService;
+import com.brightk.cs.core.CsUtils;
 import com.brightk.cs.core.UriRequest;
 import com.brightk.cs.core.UriRespond;
-
-import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * CS - component service 的缩写
  * 轻量级的组件通信框架
- *
  */
 public class CS {
 
     public static int CS_CODE_SUCCEED = 0;
     public static int CS_CODE_NOT_FIND = 404;
 
+    /**
+     * 注册服务
+     *
+     * @param key
+     * @param className
+     */
     public static void register(String key, String className) {
         ComponentServiceManger.register(key, className);
     }
 
+    protected static UriRespond connect(UriRequest request) {
+        String key = CsUtils.getKey(request.getUri());
+        CsService service = ComponentServiceManger.getService(key);
+        if (service != null) {
+            return service.call(request);
+        } else {
+            return new UriRespond(CS.CS_CODE_NOT_FIND);
+        }
+    }
+
+    public static UriRespond startRequest(UriRequest request) {
+        return connect(request);
+    }
+
     public static UriRespond startUri(Context context, Uri uri) {
-        return new UriRequest(context, uri).connect();
+        return startRequest(new UriRequest(context, uri));
     }
 
     public static UriRespond startUri(Context context, String uri) {
@@ -48,95 +58,5 @@ public class CS {
         return startUri(null, uri);
     }
 
-    public static class RequestBuild {
-        private Uri.Builder uriBuilder;
-        private Uri uri;
-        private Bundle params;
-        private Context context;
-
-        public RequestBuild(String url) {
-            this.uri = Uri.parse(url);
-        }
-
-        public RequestBuild addQueryParams(String key, String value) {
-            if (uriBuilder == null) {
-                uriBuilder = uri.buildUpon();
-            }
-            uriBuilder.appendQueryParameter(key, value);
-            return this;
-        }
-
-        public RequestBuild setContext(Context context) {
-            this.context = context;
-            return this;
-        }
-
-        public RequestBuild setParams(Bundle params) {
-            this.params = params;
-            return this;
-        }
-
-        public RequestBuild addParams(String key, Object value) throws CsNotSupportParamsException {
-            if (params == null) {
-                params = new Bundle();
-            }
-            if (value instanceof Byte) {
-                params.putByte(key, (Byte) value);
-            } else if (value instanceof Character) {
-                params.putChar(key, (Character) value);
-            } else if (value instanceof Short) {
-                params.putShort(key, (Short) value);
-            } else if (value instanceof Float) {
-                params.putFloat(key, (Float) value);
-            } else if (value instanceof CharSequence) {
-                params.putCharSequence(key, (CharSequence) value);
-            } else if (value instanceof Parcelable) {
-                params.putParcelable(key, (Parcelable) value);
-            } else if (value instanceof Size) {
-                params.putSize(key, (Size) value);
-            } else if (value instanceof SizeF) {
-                params.putSizeF(key, (SizeF) value);
-            } else if (value instanceof Parcelable[]) {
-                params.putParcelableArray(key, (Parcelable[]) value);
-            } else if (value instanceof ArrayList) {
-                params.putParcelableArrayList(key, (ArrayList) value);
-            } else if (value instanceof SparseArray) {
-                params.putSparseParcelableArray(key, (SparseArray) value);
-            } else if (value instanceof Serializable) {
-                params.putSerializable(key, (Serializable) value);
-            } else if (value instanceof byte[]) {
-                params.putByteArray(key, (byte[]) value);
-            } else if (value instanceof short[]) {
-                params.putShortArray(key, (short[]) value);
-            } else if (value instanceof char[]) {
-                params.putCharArray(key, (char[]) value);
-            } else if (value instanceof float[]) {
-                params.putFloatArray(key, (float[]) value);
-            } else if (value instanceof CharSequence[]) {
-                params.putCharSequenceArray(key, (CharSequence[]) value);
-            } else if (value instanceof Bundle) {
-                params.putBundle(key, (Bundle) value);
-            } else if (value instanceof Binder) {
-                params.putBinder(key, (Binder) value);
-            } else if (value instanceof IBinder) {
-                params.putBinder(key, (IBinder) value);
-            } else {
-                throw new CsNotSupportParamsException(value);
-            }
-            return this;
-        }
-
-        public UriRespond connect() {
-            UriRequest request;
-            if (uriBuilder != null) {
-                request = new UriRequest(uriBuilder.build());
-            } else {
-                request = new UriRequest(uri);
-            }
-            request.setParams(params);
-            request.setContext(context);
-            return request.connect();
-        }
-    }
 
 }

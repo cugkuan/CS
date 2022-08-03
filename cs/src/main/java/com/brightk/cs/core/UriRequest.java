@@ -61,17 +61,5 @@ public class UriRequest {
     }
 
 
-    final public CsService getService() {
-        String key = CsUtils.getKey(uri);
-        return ComponentServiceManger.getService(key);
-    }
 
-    public UriRespond connect() {
-        CsService csService = getService();
-        if (csService != null) {
-            return csService.call(this);
-        } else {
-            return new UriRespond(CS.CS_CODE_NOT_FIND);
-        }
-    }
 }

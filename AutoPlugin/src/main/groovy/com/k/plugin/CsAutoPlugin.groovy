@@ -18,7 +18,7 @@ class CsAutoPlugin implements Plugin<Project> {
         project.extensions.create("csConfig",CsConfig.class)
         AutoInjector.clear()
         def android = project.extensions.getByType(AppExtension)
-        android.registerTransform(new AutoInjectTransform(project))
+        android.registerTransform(new CsTransform(project))
 
         project.afterEvaluate {
             AutoInjector.ignorePackages = ['android','com/google','org','androidx','kotlin',"Lorg"]

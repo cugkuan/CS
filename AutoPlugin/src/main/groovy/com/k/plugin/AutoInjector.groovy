@@ -56,7 +56,7 @@ class AutoInjector {
     }
 
     static boolean filterPackage(String filename) {
-        if (scanPackages  == null) {
+        if (scanPackages == null) {
             if (ignorePackages == null) return false
             for (int i = 0; i < ignorePackages.size(); i++) {
                 if (filename.startsWith(ignorePackages[i])) {
@@ -64,10 +64,10 @@ class AutoInjector {
                 }
             }
             return false
-        }else {
-            scanPackages.each {name ->
-                if (filename.startsWith(name)){
-                    return  true
+        } else {
+            scanPackages.each { name ->
+                if (filename.startsWith(name)) {
+                    return true
                 }
             }
             return false

@@ -7,20 +7,20 @@ import com.k.plugin.AutoInjector
 import org.gradle.api.Project
 import org.gradle.internal.impldep.org.eclipse.jgit.annotations.NonNull
 
-class AutoInjectTransform extends Transform {
+class CsTransform extends Transform {
 
 
     private Project project
 
 
-    AutoInjectTransform(Project project) {
+    CsTransform(Project project) {
         this.project = project
     }
 
 
     @Override
     String getName() {
-        return "autoInject"
+        return "csAutoTransform"
     }
 
     @Override

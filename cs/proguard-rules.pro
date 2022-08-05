@@ -25,5 +25,6 @@
 
 # 需要通过反射来找到服务，创建服务
 -keep class * implements com.brightk.cs.core.CsService
+-keep class com.brightk.cs.core.CsService {*;}
 
 

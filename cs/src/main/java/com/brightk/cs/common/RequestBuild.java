@@ -17,9 +17,13 @@ import com.brightk.cs.core.UriRespond;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * 请求参数构建
+ */
 public class RequestBuild {
     private Uri.Builder uriBuilder;
     private Uri uri;
+    private String action;
     private Bundle params;
     private Context context;
 
@@ -37,6 +41,10 @@ public class RequestBuild {
 
     public RequestBuild setContext(Context context) {
         this.context = context;
+        return this;
+    }
+    public RequestBuild setAction(String action){
+        this.action = action;
         return this;
     }
 
@@ -102,6 +110,7 @@ public class RequestBuild {
         } else {
             request = new UriRequest(uri);
         }
+        request.setAction(action);
         request.setParams(params);
         request.setContext(context);
         return CS.startRequest(request);

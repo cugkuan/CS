@@ -14,6 +14,7 @@ import java.util.Map;
 
 public class UriRequest {
     private WeakReference<Context> context;
+    private String action;
     private Bundle params;
     private final @NonNull
     Uri uri;
@@ -40,6 +41,13 @@ public class UriRequest {
         } else {
             this.context = new WeakReference(context);
         }
+    }
+
+    public void setAction(@Nullable String action){
+        this.action = action;
+    }
+    public @Nullable String getAction(){
+        return action;
     }
 
     public void setParams(Bundle params) {

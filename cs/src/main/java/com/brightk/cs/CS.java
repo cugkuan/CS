@@ -19,6 +19,19 @@ public class CS {
     public static int CS_CODE_NOT_FIND = 404;
 
     /**
+     * 服务器内部错误
+     */
+    public static int CS_CODE_SERVICE_ERROR = 500;
+    /**
+     * context 缺失了
+     */
+    public static int CS_CODE_SERVICE_CONTEXT_OUT = 501;
+    /**
+     * 缺少参数
+     */
+    public static int CS_CODE_SERVICE_LACK_PARAMS = 502;
+
+    /**
      * 注册服务
      *
      * @param key

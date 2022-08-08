@@ -3,6 +3,7 @@ package com.brightk.cs;
 import android.content.Context;
 import android.net.Uri;
 
+import com.brightk.cs.common.UriRequestBuild;
 import com.brightk.cs.core.ComponentServiceManger;
 import com.brightk.cs.core.CsService;
 import com.brightk.cs.core.CsUtils;
@@ -45,7 +46,7 @@ public class CS {
         ComponentServiceManger.register(key, className);
     }
 
-    protected static void connect(UriRequest request, OnRequestResultListener listener) {
+    protected static void call(UriRequest request, OnRequestResultListener listener) {
         String key = CsUtils.getKey(request.getUri());
         CsService service = ComponentServiceManger.getService(key);
         if (service != null) {
@@ -56,28 +57,13 @@ public class CS {
     }
 
     public static void startRequest(UriRequest request, OnRequestResultListener listener) {
-        connect(request, listener);
+        call(request, listener);
     }
 
     public static UriRespond startUri(Context context, Uri uri) {
-        UriRequest request = new UriRequest(context, uri);
-        AtomicReference<UriRespond> uriRespond = new AtomicReference<>();
-        connect(request, respond -> {
-            uriRespond.set(respond);
-            try {
-                request.notify();
-            }catch (Exception e) {
-            }
-        });
-        synchronized (request){
-            if (uriRespond.get() == null) {
-                try {
-                    request.wait();
-                } catch (InterruptedException e) {
-                }
-            }
-        }
-        return uriRespond.get();
+       return new  UriRequestBuild(uri)
+               .setContext(context)
+               .connect();
     }
 
     public static UriRespond startUri(Context context, String uri) {

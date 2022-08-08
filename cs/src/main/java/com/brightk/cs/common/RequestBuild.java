@@ -11,8 +11,8 @@ import android.util.SizeF;
 import android.util.SparseArray;
 
 import com.brightk.cs.CS;
+import com.brightk.cs.core.OnRequestResultListener;
 import com.brightk.cs.core.UriRequest;
-import com.brightk.cs.core.UriRespond;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -43,7 +43,8 @@ public class RequestBuild {
         this.context = context;
         return this;
     }
-    public RequestBuild setAction(String action){
+
+    public RequestBuild setAction(String action) {
         this.action = action;
         return this;
     }
@@ -103,7 +104,7 @@ public class RequestBuild {
         return this;
     }
 
-    public UriRespond connect() {
+    public void connect(OnRequestResultListener listener) {
         UriRequest request;
         if (uriBuilder != null) {
             request = new UriRequest(uriBuilder.build());
@@ -113,6 +114,7 @@ public class RequestBuild {
         request.setAction(action);
         request.setParams(params);
         request.setContext(context);
-        return CS.startRequest(request);
+
+        CS.startRequest(request, listener);
     }
 }

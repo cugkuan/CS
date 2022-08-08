@@ -6,14 +6,18 @@ import android.net.Uri;
 import com.brightk.cs.core.ComponentServiceManger;
 import com.brightk.cs.core.CsService;
 import com.brightk.cs.core.CsUtils;
+import com.brightk.cs.core.OnRequestResultListener;
 import com.brightk.cs.core.UriRequest;
 import com.brightk.cs.core.UriRespond;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * CS - component service 的缩写
  * 轻量级的组件通信框架
  */
 public class CS {
+
 
     public static int CS_CODE_SUCCEED = 0;
     public static int CS_CODE_NOT_FIND = 404;
@@ -41,22 +45,39 @@ public class CS {
         ComponentServiceManger.register(key, className);
     }
 
-    protected static UriRespond connect(UriRequest request) {
+    protected static void connect(UriRequest request, OnRequestResultListener listener) {
         String key = CsUtils.getKey(request.getUri());
         CsService service = ComponentServiceManger.getService(key);
         if (service != null) {
-            return service.call(request);
+            service.call(request, listener);
         } else {
-            return new UriRespond(CS.CS_CODE_NOT_FIND);
+            listener.result(UriRespond.NOTFIND(request));
         }
     }
 
-    public static UriRespond startRequest(UriRequest request) {
-        return connect(request);
+    public static void startRequest(UriRequest request, OnRequestResultListener listener) {
+        connect(request, listener);
     }
 
     public static UriRespond startUri(Context context, Uri uri) {
-        return startRequest(new UriRequest(context, uri));
+        UriRequest request = new UriRequest(context, uri);
+        AtomicReference<UriRespond> uriRespond = new AtomicReference<>();
+        connect(request, respond -> {
+            uriRespond.set(respond);
+            try {
+                request.notify();
+            }catch (Exception e) {
+            }
+        });
+        synchronized (request){
+            if (uriRespond.get() == null) {
+                try {
+                    request.wait();
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+        return uriRespond.get();
     }
 
     public static UriRespond startUri(Context context, String uri) {
@@ -64,7 +85,7 @@ public class CS {
     }
 
     public static UriRespond startUri(String uri) {
-        return startUri(null, uri);
+       return startUri(null, uri);
     }
 
     public static UriRespond startUri(Uri uri) {

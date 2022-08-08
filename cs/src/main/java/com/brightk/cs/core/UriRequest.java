@@ -7,17 +7,16 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.brightk.cs.CS;
-
 import java.lang.ref.WeakReference;
-import java.util.Map;
 
 public class UriRequest {
+
     private WeakReference<Context> context;
     private String action;
     private Bundle params;
     private final @NonNull
     Uri uri;
+
 
     public UriRequest(Uri uri) {
         this(null, uri);
@@ -29,6 +28,7 @@ public class UriRequest {
         }
         this.uri = uri;
     }
+
 
     public @NonNull
     Uri getUri() {

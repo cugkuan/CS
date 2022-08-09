@@ -52,7 +52,9 @@ public class CS {
         if (service != null) {
             service.call(request, listener);
         } else {
-            listener.result(UriRespond.NOTFIND(request));
+            if (listener != null) {
+                listener.result(UriRespond.NOTFIND(request));
+            }
         }
     }
 

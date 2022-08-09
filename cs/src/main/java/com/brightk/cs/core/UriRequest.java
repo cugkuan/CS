@@ -78,7 +78,7 @@ public class UriRequest {
         params.put(REQUEST_PARAMS_KEY_BUNDLE, bundle);
     }
 
-    public Bundle getBundle() {
+    public @Nullable  Bundle getBundle() {
         return getParam(Bundle.class, REQUEST_PARAMS_KEY_BUNDLE);
     }
 
@@ -91,23 +91,23 @@ public class UriRequest {
         }
     }
 
-    public String getQueryParameter(String key) {
+    public @Nullable String getQueryParameter(String key) {
         return uri.getQueryParameter(key);
     }
 
-    public String getStringParam(String key) {
+    public @Nullable String getStringParam(String key) {
         return getParam(String.class, key);
     }
 
-    public int getIntParam(String key) {
+    public @Nullable Integer getIntParam(String key) {
         return getParam(Integer.class, key);
     }
 
-    public Long getLongParam(String key) {
+    public @Nullable Long getLongParam(String key) {
         return getParam(Long.class, key);
     }
 
-    public Boolean getBooleanParam(String key) {
+    public @Nullable Boolean getBooleanParam(String key) {
         return getParam(Boolean.class, key);
     }
 

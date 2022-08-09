@@ -13,5 +13,7 @@ public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
         assertEquals(4, 2 + 2);
+
+        String  value =  (String)null;
     }
 }

@@ -69,7 +69,7 @@ public class UriRequestBuild {
         if (uriBuilder != null) {
             request = new UriRequest(context,uriBuilder.build());
         } else {
-            request = new UriRequest(uri);
+            request = new UriRequest(context,uri);
         }
         request.putParams(params);
 
@@ -78,6 +78,9 @@ public class UriRequestBuild {
 
     public void call(OnRequestResultListener listener){
         CS.startRequest(build(),listener);
+    }
+    public void call(){
+        CS.startRequest(build(),null);
     }
 
     public UriRespond connect() {

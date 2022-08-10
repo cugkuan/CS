@@ -3,6 +3,8 @@ package com.brightk.cs;
 import android.content.Context;
 import android.net.Uri;
 
+import androidx.annotation.Nullable;
+
 import com.brightk.cs.common.UriRequestBuild;
 import com.brightk.cs.core.ComponentServiceManger;
 import com.brightk.cs.core.CsService;
@@ -46,7 +48,7 @@ public class CS {
         ComponentServiceManger.register(key, className);
     }
 
-    protected static void call(UriRequest request, OnRequestResultListener listener) {
+    protected static void call(UriRequest request, @Nullable OnRequestResultListener listener) {
         String key = CsUtils.getKey(request.getUri());
         CsService service = ComponentServiceManger.getService(key);
         if (service != null) {
@@ -58,7 +60,7 @@ public class CS {
         }
     }
 
-    public static void startRequest(UriRequest request, OnRequestResultListener listener) {
+    public static void startRequest(UriRequest request, @Nullable OnRequestResultListener listener) {
         call(request, listener);
     }
 

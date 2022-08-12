@@ -49,8 +49,7 @@ public class CS {
     }
 
     protected static void call(UriRequest request, @Nullable OnRequestResultListener listener) {
-        String key = CsUtils.getKey(request.getUri());
-        CsService service = ComponentServiceManger.getService(key);
+        CsService service = findService(request.getUri());
         if (service != null) {
             service.call(request, listener);
         } else {
@@ -59,6 +58,17 @@ public class CS {
             }
         }
     }
+
+    public static @Nullable CsService findService(Uri uri){
+        String key = CsUtils.getKey(uri);
+        return ComponentServiceManger.getService(key);
+    }
+
+    public static @Nullable CsService findService(String uri){
+        String key = CsUtils.getKey(uri);
+        return ComponentServiceManger.getService(key);
+    }
+
 
     public static void startRequest(UriRequest request, @Nullable OnRequestResultListener listener) {
         call(request, listener);

@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class CS {
 
 
-    public static int CS_CODE_SUCCEED = 0;
+    public static int CS_CODE_SUCCEED = 200;
     public static int CS_CODE_NOT_FIND = 404;
 
     /**
@@ -60,13 +60,11 @@ public class CS {
     }
 
     public static @Nullable CsService findService(Uri uri){
-        String key = CsUtils.getKey(uri);
-        return ComponentServiceManger.getService(key);
+        return CsManger.getInstance().getService(uri);
     }
 
     public static @Nullable CsService findService(String uri){
-        String key = CsUtils.getKey(uri);
-        return ComponentServiceManger.getService(key);
+        return findService(Uri.parse(uri));
     }
 
 

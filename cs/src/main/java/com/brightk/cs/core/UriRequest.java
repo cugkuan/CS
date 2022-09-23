@@ -15,6 +15,7 @@ public class UriRequest {
 
     public static String REQUEST_PARAMS_KEY_ACTION = "uri_request_key_action";
     public static String REQUEST_PARAMS_KEY_BUNDLE = "uri_request_key_bundle";
+    public static String REQUEST_PARAMS_DEFAULT_DATA = "uri_request_default_data";
 
     private WeakReference<Context> context;
     private Map<String, Object> params;
@@ -58,6 +59,23 @@ public class UriRequest {
         return getStringParam(REQUEST_PARAMS_KEY_ACTION);
     }
 
+    public void setData(Object data) {
+        if (params == null) {
+            params = new HashMap<String, Object>();
+        }
+        params.put(REQUEST_PARAMS_DEFAULT_DATA, data);
+    }
+
+    public @Nullable
+    Object getData() {
+        if (params == null) {
+            return null;
+        } else {
+            return params.get(REQUEST_PARAMS_DEFAULT_DATA);
+        }
+    }
+
+
     public void putParams(Map<String, Object> params) {
         if (this.params == null) {
             this.params = params;
@@ -78,7 +96,8 @@ public class UriRequest {
         params.put(REQUEST_PARAMS_KEY_BUNDLE, bundle);
     }
 
-    public @Nullable  Bundle getBundle() {
+    public @Nullable
+    Bundle getBundle() {
         return getParam(Bundle.class, REQUEST_PARAMS_KEY_BUNDLE);
     }
 
@@ -91,30 +110,36 @@ public class UriRequest {
         }
     }
 
-    public @Nullable String getQueryParameter(String key) {
+    public @Nullable
+    String getQueryParameter(String key) {
         return uri.getQueryParameter(key);
     }
 
-    public @Nullable String getStringParam(String key) {
+    public @Nullable
+    String getStringParam(String key) {
         return getParam(String.class, key);
     }
 
-    public @Nullable Integer getIntParam(String key) {
+    public @Nullable
+    Integer getIntParam(String key) {
         return getParam(Integer.class, key);
     }
 
-    public @Nullable Long getLongParam(String key) {
+    public @Nullable
+    Long getLongParam(String key) {
         return getParam(Long.class, key);
     }
 
-    public @Nullable Boolean getBooleanParam(String key) {
+    public @Nullable
+    Boolean getBooleanParam(String key) {
         return getParam(Boolean.class, key);
     }
 
-    public @Nullable Object getParam(@Nullable String key){
-        if (params != null){
+    public @Nullable
+    Object getParam(@Nullable String key) {
+        if (params != null) {
             return params.get(key);
-        }else {
+        } else {
             return null;
         }
     }

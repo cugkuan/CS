@@ -2,6 +2,10 @@ package com.brightk.cs.core;
 
 import android.net.Uri;
 
+/**
+ * key 生成的规则必须和AutoPlugin 生成的规则一致性
+ * 改动这里的代码注意同步改
+ */
 public class CsUtils {
 
 

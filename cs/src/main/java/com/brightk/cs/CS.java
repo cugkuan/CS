@@ -8,12 +8,9 @@ import androidx.annotation.Nullable;
 import com.brightk.cs.common.UriRequestBuild;
 import com.brightk.cs.core.ComponentServiceManger;
 import com.brightk.cs.core.CsService;
-import com.brightk.cs.core.CsUtils;
 import com.brightk.cs.core.OnRequestResultListener;
 import com.brightk.cs.core.UriRequest;
 import com.brightk.cs.core.UriRespond;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * CS - component service 的缩写
@@ -38,15 +35,7 @@ public class CS {
      */
     public static int CS_CODE_SERVICE_LACK_PARAMS = 502;
 
-    /**
-     * 注册服务
-     *
-     * @param key
-     * @param className
-     */
-    public static void register(String key, String className) {
-        ComponentServiceManger.register(key, className);
-    }
+
 
     protected static void call(UriRequest request, @Nullable OnRequestResultListener listener) {
         CsService service = findService(request.getUri());
@@ -60,7 +49,7 @@ public class CS {
     }
 
     public static @Nullable CsService findService(Uri uri){
-        return CsManger.getInstance().getService(uri);
+        return CsServiceManger.getInstance().getService(uri);
     }
 
     public static @Nullable CsService findService(String uri){

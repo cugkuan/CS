@@ -47,6 +47,9 @@ public class UriRespond {
     public static UriRespond CONTEXTOUT(){
         return  new UriRespond(CS.CS_CODE_SERVICE_CONTEXT_OUT,"context缺失");
     }
+    public static UriRespond LACKPARAMS(String msg){
+        return new UriRespond(CS.CS_CODE_SERVICE_LACK_PARAMS,msg);
+    }
 
 
 }

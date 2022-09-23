@@ -8,14 +8,14 @@ import com.brightk.cs.core.CsService;
 import com.brightk.cs.core.CsUtils;
 
 
-class CsManger {
-    public static int CACHE_MAX_SIZE = 5;
-    private static volatile CsManger singleton;
-    public static CsManger getInstance(){
+class CsServiceManger {
+    public static int CACHE_MAX_SIZE = 50;
+    private static volatile CsServiceManger singleton;
+    public static CsServiceManger getInstance(){
         if (singleton == null) {
-            synchronized (CsManger.class) {
+            synchronized (CsServiceManger.class) {
                 if (singleton == null) {
-                    singleton = new CsManger();
+                    singleton = new CsServiceManger();
                 }
             }
         }
@@ -23,10 +23,9 @@ class CsManger {
     }
 
     private LruCache<String, CsService>  csServiceLruCache = new LruCache<String,CsService>(CACHE_MAX_SIZE){
-
         @Override
         protected CsService create(String key) {
-            return ComponentServiceManger.getService(key);
+            return ComponentServiceManger.createService(key);
         }
     };
 

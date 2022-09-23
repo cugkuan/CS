@@ -111,6 +111,14 @@ public class UriRequest {
         return getParam(Boolean.class, key);
     }
 
+    public @Nullable Object getParam(@Nullable String key){
+        if (params != null){
+            return params.get(key);
+        }else {
+            return null;
+        }
+    }
+
 
     public <T> T getParam(@NonNull Class<T> clazz, @NonNull String key) {
         if (params == null) {

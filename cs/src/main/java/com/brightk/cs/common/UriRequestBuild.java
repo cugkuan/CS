@@ -63,6 +63,14 @@ public class UriRequestBuild {
         params.put(key,value);
         return this;
     }
+    public UriRequestBuild putParams(Map<String, Object> params) {
+        if (this.params == null) {
+            this.params = params;
+        } else {
+            this.params.putAll(params);
+        }
+        return this;
+    }
 
     public UriRequest build(){
         UriRequest request;

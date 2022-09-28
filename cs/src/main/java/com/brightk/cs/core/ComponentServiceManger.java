@@ -6,61 +6,63 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.brightk.cs.core.annotation.CsUri;
-
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class ComponentServiceManger {
 
     private static ConcurrentMap<String, String> csConfig = new ConcurrentHashMap<>();
-    private static ConcurrentMap<String, Class<CsService>> csServices = new ConcurrentHashMap<>();
 
     public static void register(String key, @NonNull String c) {
         csConfig.put(key, c);
     }
+
     /**
      * 手动注册服务
      *
      * @param service
      */
-    public static void register(Class<CsService> service) {
-        CsUri csUri = service.getAnnotation(CsUri.class);
-        if (csUri == null) {
-            throw new NullPointerException("CsUri没有配置");
-        } else {
-            String uri = csUri.uri();
-            String key = CsUtils.getKey(uri);
-            csServices.put(key, service);
-        }
+    public static void register(String uri, Class<CsService> service, ServiceType serviceType) {
+        String key = CsUtils.getKey(uri);
+        String config = service.getName() + serviceType.getFlag();
+        csConfig.put(key, config);
     }
 
+    private static ServiceType getServiceType(char flag) {
+        if (flag == ServiceType.DEFAULT.getFlag()) {
+            return ServiceType.DEFAULT;
+        } else if (flag == ServiceType.NEW.getFlag()) {
+            return ServiceType.NEW;
+        } else if (flag == ServiceType.SINGLE.getFlag()) {
+            return ServiceType.SINGLE;
+        } else {
+            return ServiceType.DEFAULT;
+        }
+    }
 
     /**
      * @param key
      * @return
      * @hide
      */
-    public static @Nullable  ServiceConfig get(String key) {
-        Class<CsService> c = csServices.get(key);
-        if (c == null) {
-            String className = csConfig.get(key);
-            if (!TextUtils.isEmpty(className)) {
-                try {
-                    c = (Class<CsService>) Class.forName(className);
-                    csServices.put(key, c);
-                    csConfig.remove(key);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
+    public static @Nullable
+    ServiceConfig get(String key) {
+        String config = csConfig.get(key);
+        if (!TextUtils.isEmpty(config)) {
+            try {
+                int index = config.length() -1;
+                char flag = config.charAt(index );
+                String className = config.substring(0, index);
+                Class<CsService> c = (Class<CsService>) Class.forName(className);
+                if (c != null) {
+                    ServiceType type = getServiceType(flag);
+                    return new ServiceConfig(c, type);
                 }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
         }
-        if (c != null) {
-            CsUri csUri = c.getAnnotation(CsUri.class);
-            ServiceType type = csUri.type();
-            return new ServiceConfig(c, type);
 
-        }
         return null;
     }
 }

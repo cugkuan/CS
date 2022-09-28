@@ -21,6 +21,8 @@ class AutoInjector {
      * 服务注解配置的uri
      */
     public static String SERVICE_CS_URI_FILE_NAME = "uri"
+
+    public static String SERVICE_CS_URI_FILE_TYPE = "type"
     /**
      * 继承的服务
      */

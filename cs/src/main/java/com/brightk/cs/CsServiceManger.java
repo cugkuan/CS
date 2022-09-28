@@ -36,17 +36,21 @@ class CsServiceManger {
         @Override
         protected ServiceConfig create(String key) {
             ServiceConfig config = ComponentServiceManger.get(key);
-            if (config.type == ServiceType.DEFAULT) {
-                config.setService(createService(config.serviceClass));
-            } else if (config.type == ServiceType.SINGLE) {
-                CsService csService = single.get(key);
-                if (csService == null) {
-                    CsService service = createService(config.serviceClass);
-                    single.put(key, service);
-                    config.setService(service);
+            if (config == null){
+                return null;
+            }else {
+                if (config.type == ServiceType.DEFAULT) {
+                    config.setService(createService(config.serviceClass));
+                } else if (config.type == ServiceType.SINGLE) {
+                    CsService csService = single.get(key);
+                    if (csService == null) {
+                        CsService service = createService(config.serviceClass);
+                        single.put(key, service);
+                        config.setService(service);
+                    }
                 }
+                return config;
             }
-            return config;
         }
     };
 

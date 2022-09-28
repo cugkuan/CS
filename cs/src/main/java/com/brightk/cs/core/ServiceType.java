@@ -6,7 +6,16 @@ package com.brightk.cs.core;
  * new --> 每次使用都创建一个新的
  */
 public enum ServiceType {
-    DEFAULT,
-    SINGLE,
-    NEW
+    DEFAULT('a'),
+    SINGLE('b'),
+    NEW('c');
+    private char flag;
+    ServiceType(char flag){
+        this.flag = flag;
+    }
+
+    public char getFlag(){
+        return flag;
+    }
+
 }

@@ -2,14 +2,11 @@ package com.k.plugin.vistor.server
 
 import com.k.plugin.AutoInjector
 import com.k.plugin.CsServiceClassInfo
-import com.k.plugin.Logger
-import com.k.plugin.vistor.OnAnnotationValueListener
-import org.apache.http.util.TextUtils
 import org.objectweb.asm.AnnotationVisitor
-import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
+import org.objectweb.asm.tree.ClassNode
 
-class ServiceClassVisitor extends ClassVisitor {
+class ServiceClassVisitor extends ClassNode {
     private String className
     private CsServiceClassInfo csServiceClassInfo
     private boolean isService;
@@ -23,29 +20,10 @@ class ServiceClassVisitor extends ClassVisitor {
         csServiceClassInfo = null
         isService = interfaces.contains(AutoInjector.SERVICE_CS_CLASS)
     }
-
     @Override
     AnnotationVisitor visitAnnotation(String descriptor, boolean visible) {
-        if (isService) {
-            if (descriptor == AutoInjector.SERVICE_CS_URI) {
-                OnAnnotationValueListener listener = new OnAnnotationValueListener() {
-                    @Override
-                    void onValue(String name, Object value) {
-                        if (name == AutoInjector.SERVICE_CS_URI_FILE_NAME) {
-                            if (TextUtils.isEmpty(value)) {
-                                throw IllegalAccessException("${className}没有配置Url地址")
-                            }
-                            if (csServiceClassInfo == null) {
-                                csServiceClassInfo = new CsServiceClassInfo(className, value)
-                                Logger.error("csService --> ${csServiceClassInfo.className} -- ${csServiceClassInfo.url} ")
-                            }
-                        }
-                    }
-                }
-                return new ServiceAnnotationVisitor(listener)
-            } else {
-                return super.visitAnnotation(descriptor, visible)
-            }
+        if (isService && descriptor == AutoInjector.SERVICE_CS_URI) {
+            return new ServiceAnnotationVisitor(className)
         } else {
             return super.visitAnnotation(descriptor, visible)
         }
@@ -54,8 +32,5 @@ class ServiceClassVisitor extends ClassVisitor {
     @Override
     void visitEnd() {
         super.visitEnd()
-        if (csServiceClassInfo != null) {
-            AutoInjector.csServiceClassInfoList.add(csServiceClassInfo)
-        }
     }
 }

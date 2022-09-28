@@ -21,8 +21,18 @@ gradlePlugin {
 }
 
 repositories {
+    maven {
+        // 配置地址
+        credentials {
+            username 'qzdapp'
+            password 'Zhiyun123'
+        }
+        url 'http://maven.qizhidao.net:8081/repository/packages-app/app/android'
+        allowInsecureProtocol true
+    }
     mavenCentral()
     google()
+
 
 }
 

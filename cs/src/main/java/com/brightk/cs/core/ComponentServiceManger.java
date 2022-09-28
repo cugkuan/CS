@@ -8,7 +8,6 @@ import androidx.annotation.Nullable;
 
 import com.brightk.cs.core.annotation.CsUri;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -20,16 +19,16 @@ public class ComponentServiceManger {
     public static void register(String key, @NonNull String c) {
         csConfig.put(key, c);
     }
-
     /**
      * 手动注册服务
+     *
      * @param service
      */
     public static void register(Class<CsService> service) {
         CsUri csUri = service.getAnnotation(CsUri.class);
-        if (csUri == null){
+        if (csUri == null) {
             throw new NullPointerException("CsUri没有配置");
-        }else {
+        } else {
             String uri = csUri.uri();
             String key = CsUtils.getKey(uri);
             csServices.put(key, service);
@@ -42,8 +41,7 @@ public class ComponentServiceManger {
      * @return
      * @hide
      */
-    public static @Nullable
-     synchronized CsService createService(String key) {
+    public static @Nullable  ServiceConfig get(String key) {
         Class<CsService> c = csServices.get(key);
         if (c == null) {
             String className = csConfig.get(key);
@@ -58,17 +56,10 @@ public class ComponentServiceManger {
             }
         }
         if (c != null) {
-            try {
-                return c.getDeclaredConstructor().newInstance();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
+            CsUri csUri = c.getAnnotation(CsUri.class);
+            ServiceType type = csUri.type();
+            return new ServiceConfig(c, type);
+
         }
         return null;
     }

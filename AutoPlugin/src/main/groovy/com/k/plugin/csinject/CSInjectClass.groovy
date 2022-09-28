@@ -1,4 +1,7 @@
-package com.k.plugin.vistor
+
+
+
+package com.k.plugin.csinject
 
 
 import org.objectweb.asm.ClassVisitor
@@ -6,22 +9,16 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 
-@Deprecated()
-class TargetClassVisitor extends ClassVisitor {
+/**
+ * 代码注入带 CS 的init方法 中
+ */
+class CSInjectClass extends  ClassVisitor {
     private String className
     private String signature
 
-    private OnInjectListener onInjectListener
-
-    public TargetClassVisitor(ClassWriter writer) {
+    public CSInjectClass(ClassWriter writer) {
         super(Opcodes.ASM6, writer)
     }
-
-
-    void setOnInjectListener(OnInjectListener listener){
-        onInjectListener = listener
-    }
-
 
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
@@ -33,8 +30,10 @@ class TargetClassVisitor extends ClassVisitor {
     @Override
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
         MethodVisitor methodVisitor = super.visitMethod(access, name, descriptor, signature, exceptions)
-        TargetMethodVisitor targetMethodVisitor = new TargetMethodVisitor(methodVisitor, access, name, descriptor)
-        targetMethodVisitor.setOnInjectListener(onInjectListener)
-        return targetMethodVisitor
+        if (name == "init"){
+          InjectTargetMethodVisitor targetMethodVisitor =  new InjectTargetMethodVisitor(methodVisitor, access, name, descriptor)
+            return targetMethodVisitor
+        }
+        return methodVisitor
     }
 }

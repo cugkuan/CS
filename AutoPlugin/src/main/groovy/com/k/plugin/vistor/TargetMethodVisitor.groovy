@@ -1,5 +1,6 @@
 package com.k.plugin.vistor
 
+import com.android.tools.r8.r.o.D
 import com.k.plugin.AutoInjector
 import com.k.plugin.CsServiceClassInfo
 import com.k.plugin.Logger
@@ -8,6 +9,7 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.AdviceAdapter
 
+@Deprecated
 class TargetMethodVisitor extends AdviceAdapter {
 
     private boolean needInject = false

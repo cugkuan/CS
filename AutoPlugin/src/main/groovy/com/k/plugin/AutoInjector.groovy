@@ -1,5 +1,6 @@
 package com.k.plugin
 
+import com.k.plugin.csinject.CSInjectClass
 import com.k.plugin.vistor.OnInjectListener
 import com.k.plugin.vistor.TargetClassVisitor
 import com.k.plugin.vistor.server.ServiceClassVisitor
@@ -28,6 +29,11 @@ class AutoInjector {
      * 自动注入的目标
      */
     public static final String AUTO_REGISTER_TARGET = "Lcom/brightk/cs/core/annotation/AutoRegisterTarget;"
+
+    /**
+     *  自动注入的目标
+     */
+    public static final String AUTO_REGISTER_CLASS = "com/brightk/cs/CS.class"
 
 
     public static String[] ignorePackages
@@ -110,6 +116,28 @@ class AutoInjector {
      * @param bytes
      * @return
      */
+    private static byte[] autoInject(byte[] bytes) {
+
+        ClassReader classReader = new ClassReader(bytes)
+        ClassWriter classWriter = new ClassWriter(classReader, ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS)
+
+        CSInjectClass targetClassVisitor = new CSInjectClass(classWriter)
+        classReader.accept(targetClassVisitor, ClassReader.EXPAND_FRAMES)
+
+        isFinishInject = true
+
+        return classWriter.toByteArray()
+
+
+    }
+
+    /**
+     * 代码自动注入中.............
+     * @param bytes
+     * 注入 到 AutoRegisterTarget 标记的注解中
+     * @return
+     */
+    @Deprecated
     private static byte[] findTargetAndInject(byte[] bytes) {
         boolean methodInject
         OnInjectListener onMethodInjectListener = new OnInjectListener() {
@@ -152,11 +180,14 @@ class AutoInjector {
                 if (filterClass(fileName)) {
                     return
                 }
-                byte[] code = findTargetAndInject(file.bytes)
-                if (code != null) {
-                    FileOutputStream fos = new FileOutputStream(file)
-                    fos.write(code)
-                    fos.close()
+                if (fileName == AUTO_REGISTER_CLASS) {
+                    Logger.error("======>"+fileName)
+                    byte[] code = autoInject(file.bytes)
+                    if (code != null) {
+                        FileOutputStream fos = new FileOutputStream(file)
+                        fos.write(code)
+                        fos.close()
+                    }
                 }
             }
         } else {
@@ -179,14 +210,17 @@ class AutoInjector {
                 if (filterClass(filename)) {
                     continue
                 }
-                InputStream inputStream = jarFile.getInputStream(jarEntry)
-                if (inputStream != null) {
-                    byte[] bytes = findTargetAndInject(inputStream.bytes)
-                    if (bytes != null) {
-                        tempModifiedClassByteMap.put(filename, bytes)
+                if (filename == AUTO_REGISTER_CLASS) {
+                    Logger.error("======>"+filename)
+                    InputStream inputStream = jarFile.getInputStream(jarEntry)
+                    if (inputStream != null) {
+                        byte[] bytes = autoInject(inputStream.bytes)
+                        if (bytes != null) {
+                            tempModifiedClassByteMap.put(filename, bytes)
+                        }
                     }
+                    inputStream.close()
                 }
-                inputStream.close()
             }
 
             if (tempModifiedClassByteMap.size() != 0) {

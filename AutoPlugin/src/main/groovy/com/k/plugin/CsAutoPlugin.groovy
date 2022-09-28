@@ -21,7 +21,7 @@ class CsAutoPlugin implements Plugin<Project> {
         android.registerTransform(new CsTransform(project))
 
         project.afterEvaluate {
-            AutoInjector.ignorePackages = ['android','com/google','org','androidx','kotlin',"Lorg"]
+            AutoInjector.ignorePackages = ['android','com/google','org','androidx','kotlin',"Lorg","java"]
             AutoInjector.scanPackages =  project.csConfig.scanPackages
         }
 

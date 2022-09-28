@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.brightk.cs.CS;
+import com.brightk.cs.common.UriRequestBuild;
+import com.brightk.cs.core.OnRequestResultListener;
+import com.brightk.cs.core.UriRespond;
 
 public class Test1Activity extends AppCompatActivity {
 
@@ -16,9 +19,17 @@ public class Test1Activity extends AppCompatActivity {
         TextView tv = findViewById(R.id.tv_hello);
 
 
-        String text = (String) (CS.startUri(this,"app://app2/service1").data);
+        new UriRequestBuild("app://app2/service1")
+                .call(new OnRequestResultListener() {
+                    @Override
+                    public void result(UriRespond respond) {
+                        String text = (String) (respond.data);
 
-        tv.setText(text);
+                        tv.setText(text);
+                    }
+                });
+
+
 
     }
 }

@@ -1,12 +1,9 @@
 package com.brightk.cs;
 
-import android.content.Context;
 import android.net.Uri;
 
 import androidx.annotation.Nullable;
 
-import com.brightk.cs.common.UriRequestBuild;
-import com.brightk.cs.core.ComponentServiceManger;
 import com.brightk.cs.core.CsService;
 import com.brightk.cs.core.OnRequestResultListener;
 import com.brightk.cs.core.UriRequest;
@@ -37,8 +34,13 @@ public class CS {
 
 
 
-    protected static void call(UriRequest request, @Nullable OnRequestResultListener listener) {
-        CsService service = findService(request.getUri());
+    public static void init(){
+
+    }
+
+
+    public static void call(UriRequest request, @Nullable OnRequestResultListener listener) {
+        CsService service = getService(request.getUri());
         if (service != null) {
             service.call(request, listener);
         } else {
@@ -48,35 +50,19 @@ public class CS {
         }
     }
 
-    public static @Nullable CsService findService(Uri uri){
+    public static @Nullable
+    CsService getService(Uri uri) {
         return CsServiceManger.getInstance().getService(uri);
     }
 
-    public static @Nullable CsService findService(String uri){
-        return findService(Uri.parse(uri));
+    public static @Nullable
+    CsService getService(String uri) {
+        return getService(Uri.parse(uri));
     }
 
 
     public static void startRequest(UriRequest request, @Nullable OnRequestResultListener listener) {
         call(request, listener);
-    }
-
-    public static UriRespond startUri(Context context, Uri uri) {
-       return new  UriRequestBuild(uri)
-               .setContext(context)
-               .connect();
-    }
-
-    public static UriRespond startUri(Context context, String uri) {
-        return startUri(context, Uri.parse(uri));
-    }
-
-    public static UriRespond startUri(String uri) {
-       return startUri(null, uri);
-    }
-
-    public static UriRespond startUri(Uri uri) {
-        return startUri(null, uri);
     }
 
 

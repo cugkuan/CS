@@ -13,7 +13,8 @@ public class ComponentServiceManger {
 
     private static ConcurrentMap<String, String> csConfig = new ConcurrentHashMap<>();
 
-    public static void register(String key, @NonNull String c) {
+
+    public static void pluginRegister(String key, @NonNull String c) {
         csConfig.put(key, c);
     }
 
@@ -26,6 +27,15 @@ public class ComponentServiceManger {
         String key = CsUtils.getKey(uri);
         String config = service.getName() + serviceType.getFlag();
         csConfig.put(key, config);
+    }
+
+    public static void register(String uri, Class<CsService> service) {
+        register(uri,service,ServiceType.DEFAULT);
+    }
+
+    public static void unRegister(String uri){
+        String key = CsUtils.getKey(uri);
+        csConfig.remove(key);
     }
 
     private static ServiceType getServiceType(char flag) {

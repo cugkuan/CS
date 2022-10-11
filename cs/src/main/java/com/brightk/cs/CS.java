@@ -4,6 +4,7 @@ import android.net.Uri;
 
 import androidx.annotation.Nullable;
 
+import com.brightk.cs.common.CsServiceManger;
 import com.brightk.cs.core.CsService;
 import com.brightk.cs.core.OnRequestResultListener;
 import com.brightk.cs.core.UriRequest;
@@ -15,10 +16,8 @@ import com.brightk.cs.core.UriRespond;
  */
 public class CS {
 
-
     public static int CS_CODE_SUCCEED = 200;
     public static int CS_CODE_NOT_FIND = 404;
-
     /**
      * 服务器内部错误
      */
@@ -31,9 +30,12 @@ public class CS {
      * 缺少参数
      */
     public static int CS_CODE_SERVICE_LACK_PARAMS = 502;
+    public static int CS_CODE_SERVICE_CANCEL_FAILURE = 600;
 
 
-
+    /**
+     *  服务自动注册的入口，通过ASM将代码注入到这里
+     */
     public static void init(){
 
     }
@@ -59,11 +61,4 @@ public class CS {
     CsService getService(String uri) {
         return getService(Uri.parse(uri));
     }
-
-
-    public static void startRequest(UriRequest request, @Nullable OnRequestResultListener listener) {
-        call(request, listener);
-    }
-
-
 }

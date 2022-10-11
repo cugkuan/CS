@@ -1,4 +1,4 @@
-package com.brightk.cs;
+package com.brightk.cs.common;
 
 import android.net.Uri;
 import android.util.LruCache;
@@ -10,15 +10,15 @@ import com.brightk.cs.core.ServiceConfig;
 import com.brightk.cs.core.ServiceType;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 
-class CsServiceManger {
+public class CsServiceManger {
     public static int CACHE_MAX_SIZE = 50;
     private static volatile CsServiceManger singleton;
+
+    private CsServiceManger(){}
 
     public static CsServiceManger getInstance() {
         if (singleton == null) {
@@ -68,6 +68,12 @@ class CsServiceManger {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public CsService getNewService(Uri uri){
+        String key = CsUtils.getKey(uri);
+        ServiceConfig config = csServiceLruCache.get(key);
+        return createService(config.serviceClass);
     }
 
     public CsService getService(Uri uri) {

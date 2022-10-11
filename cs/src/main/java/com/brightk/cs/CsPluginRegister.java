@@ -12,6 +12,6 @@ public class CsPluginRegister {
      * @param className
      */
     public static void register(String key, String className) {
-        ComponentServiceManger.register(key, className);
+        ComponentServiceManger.pluginRegister(key, className);
     }
 }

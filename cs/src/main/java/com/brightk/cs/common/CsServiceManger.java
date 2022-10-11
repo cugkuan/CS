@@ -3,6 +3,8 @@ package com.brightk.cs.common;
 import android.net.Uri;
 import android.util.LruCache;
 
+import androidx.annotation.Nullable;
+
 import com.brightk.cs.core.ComponentServiceManger;
 import com.brightk.cs.core.CsService;
 import com.brightk.cs.core.CsUtils;
@@ -54,7 +56,7 @@ public class CsServiceManger {
         }
     };
 
-    private synchronized CsService createService(Class<CsService> c) {
+    private synchronized @Nullable CsService createService(Class<CsService> c) {
         try {
             CsService service = c.getDeclaredConstructor().newInstance();
             return service;
@@ -70,19 +72,27 @@ public class CsServiceManger {
         return null;
     }
 
-    public CsService getNewService(Uri uri){
+    public @Nullable CsService getNewService(Uri uri){
         String key = CsUtils.getKey(uri);
         ServiceConfig config = csServiceLruCache.get(key);
-        return createService(config.serviceClass);
+        if (config != null) {
+            return createService(config.serviceClass);
+        }else {
+            return null;
+        }
     }
 
-    public CsService getService(Uri uri) {
+    public @Nullable CsService getService(Uri uri) {
         String key = CsUtils.getKey(uri);
         ServiceConfig config = csServiceLruCache.get(key);
-        if (config.type == ServiceType.NEW) {
-            return createService(config.serviceClass);
-        } else {
-            return config.getService();
+        if (config == null){
+            return null;
+        }else {
+            if (config.type == ServiceType.NEW) {
+                return createService(config.serviceClass);
+            } else {
+                return config.getService();
+            }
         }
     }
 }

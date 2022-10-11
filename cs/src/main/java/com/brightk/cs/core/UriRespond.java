@@ -42,13 +42,13 @@ public class UriRespond {
         return new UriRespond(CS.CS_CODE_SUCCEED,data);
     }
     public static UriRespond NOTFIND(UriRequest request){
-        return new UriRespond(CS.CS_CODE_NOT_FIND,"未找到"+ request.getUri());
+        return new UriRespond(CS.CS_CODE_NOT_FIND,new Throwable("未找到"+ request.getUri()));
     }
     public static UriRespond CONTEXTOUT(){
-        return  new UriRespond(CS.CS_CODE_SERVICE_CONTEXT_OUT,"context缺失");
+        return  new UriRespond(CS.CS_CODE_SERVICE_CONTEXT_OUT, new Throwable("context缺失"));
     }
     public static UriRespond LACKPARAMS(String msg){
-        return new UriRespond(CS.CS_CODE_SERVICE_LACK_PARAMS,msg);
+        return new UriRespond(CS.CS_CODE_SERVICE_LACK_PARAMS,new Throwable(msg));
     }
 
 

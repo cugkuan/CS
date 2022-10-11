@@ -22,6 +22,8 @@ public class CS {
      * 服务器内部错误
      */
     public static int CS_CODE_SERVICE_ERROR = 500;
+
+    public static int CS_CODE_SERVICE_TIMEOUT = 501;
     /**
      * context 缺失了
      */

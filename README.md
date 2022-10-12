@@ -26,6 +26,12 @@ api 'com.brightk.cs:cs:0.3.6'
 apply plugin: 'com.brightk.cs'
 ```
 
+# 特点
+
+- Service 自动注册；采用了 ASM 技术，在编译阶段，遍历服务，然后生成注册代码，插入对应位置，对启动速度没有丝毫影响。
+- 自动检测 Service 配置的 Uri,在编译阶段杜绝了重复 Uri 的可能性
+- 所有的组件都是平行独立的。
+
 # 使用
 
 创建 CsService

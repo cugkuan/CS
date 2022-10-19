@@ -100,7 +100,7 @@ public class UriRequestBuild {
         CS.call(request, respond -> {
             synchronized (this) {
                 if (respond == null){
-                    uriRespond.set(new UriRespond(CS.CS_CODE_RESPOND_NULL));
+                    uriRespond.set(new UriRespond(CS.CS_CODE_RESPOND_NULL,new NullPointerException("Cs:组件服务中没有返回 respond")));
                 }else {
                     uriRespond.set(respond);
                 }
@@ -122,7 +122,9 @@ public class UriRequestBuild {
                     isWait = true;
                     this.wait();
                 } catch (InterruptedException e) {
+                    uriRespond.set(new UriRespond(CS.CS_CODE_RESPOND_NULL,e));
                     e.printStackTrace();
+
                 }
             }
         }

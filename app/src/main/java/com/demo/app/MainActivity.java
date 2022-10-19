@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                        UriRespond respond = new UriRequestBuild( "app://app1/service2")
-                                .connect(7*1000);
+                                .connect();
 
                        String msg  = null;
                        if (respond.code == CS.CS_CODE_SUCCEED){

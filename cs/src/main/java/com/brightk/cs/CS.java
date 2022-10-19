@@ -24,6 +24,8 @@ public class CS {
     public static int CS_CODE_SERVICE_ERROR = 500;
 
     public static int CS_CODE_SERVICE_TIMEOUT = 501;
+
+    public static int CS_CODE_RESPOND_NULL = 502;
     /**
      * context 缺失了
      */

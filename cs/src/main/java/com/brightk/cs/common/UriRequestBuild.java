@@ -18,18 +18,17 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * 请求参数构建
  */
-public class UriRequestBuild  {
+public class UriRequestBuild {
     private volatile boolean isWait = false;
     private Uri.Builder uriBuilder;
     private Uri uri;
     private WeakReference<Context> context;
     private Map<String, Object> params;
 
-    private volatile  boolean isTimeout = false;
-
     public UriRequestBuild(String url) {
         this.uri = Uri.parse(url);
     }
+
     public UriRequestBuild(Uri uri) {
         this.uri = uri;
     }
@@ -64,6 +63,7 @@ public class UriRequestBuild  {
         params.put(key, value);
         return this;
     }
+
     public UriRequestBuild putParams(Map<String, Object> params) {
         if (this.params == null) {
             this.params = params;
@@ -72,13 +72,14 @@ public class UriRequestBuild  {
         }
         return this;
     }
+
     protected UriRequest build() {
-        if (uriBuilder != null){
+        if (uriBuilder != null) {
             uri = uriBuilder.build();
         }
         Context c = null;
-        if (context != null){
-            c  = context.get();
+        if (context != null) {
+            c = context.get();
         }
         UriRequest request = new UriRequest(c, uri);
         request.putParams(params);
@@ -88,56 +89,45 @@ public class UriRequestBuild  {
     public void call(OnRequestResultListener listener) {
         CS.call(build(), listener);
     }
+
     public void call() {
         call(null);
     }
 
-    public UriRespond connect(long timeOut){
+    public UriRespond connect() {
         UriRequest request = build();
         AtomicReference<UriRespond> uriRespond = new AtomicReference<>();
         CS.call(request, respond -> {
-            synchronized (request) {
+            synchronized (this) {
                 if (respond == null){
-                    throw new  NullPointerException("respond 不能为 null");
+                    uriRespond.set(new UriRespond(CS.CS_CODE_RESPOND_NULL));
+                }else {
+                    uriRespond.set(respond);
                 }
-                uriRespond.set(respond);
                 if (isWait) {
                     try {
-                        request.notify();
+                        this.notifyAll();
                     } catch (IllegalMonitorStateException e) {
+                        e.printStackTrace();
                     }
                 }
             }
         });
-        isTimeout = false;
-        synchronized (request) {
+        synchronized (this) {
             while (uriRespond.get() == null) {
-                if (isTimeout){
-                    break;
-                }
-                if (Thread.currentThread() == Looper.getMainLooper().getThread()){
+                if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
                     throw new RuntimeException("Cs:不能在主线中进行这样的操作");
                 }
                 try {
                     isWait = true;
-                    if (timeOut > 0) {
-                        request.wait(timeOut);
-                    }else {
-                        request.wait();
-                    }
-                    isTimeout = true;
+                    this.wait();
                 } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
-        if (uriRespond.get() == null){
-            return new UriRespond(CS.CS_CODE_SERVICE_TIMEOUT,new TimeOutException("服务连接接超时"));
-        }else {
-            return uriRespond.get();
-        }
+        return uriRespond.get();
+
     }
 
-    public UriRespond connect() {
-        return connect(0);
-    }
 }

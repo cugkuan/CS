@@ -17,6 +17,10 @@ import com.brightk.cs.core.UriRespond;
 public class CS {
 
     public static int CS_CODE_SUCCEED = 200;
+    /**
+     * 用户没有指定 OnRequestServiceListener 的时候，默认回调
+     */
+    public static int CS_CODE_DEFAULT = 201;
     public static int CS_CODE_NOT_FIND = 404;
     /**
      * 服务器内部错误

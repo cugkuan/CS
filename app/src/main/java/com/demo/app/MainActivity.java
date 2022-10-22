@@ -28,6 +28,22 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+//        UriRespond respond = new UriRequestBuild( "app://app1/service2")
+//                .connect();
+//
+//        String msg  = null;
+//        if (respond.code == CS.CS_CODE_SUCCEED){
+//            msg = respond.data.toString();
+//        }else {
+//            msg = respond.throwable.getMessage();
+//        }
+//        String finalMsg = msg;
+//        runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                Toast.makeText(MainActivity.this, finalMsg,Toast.LENGTH_LONG).show();
+//            }
+//        });
 
 
         new Handler().postDelayed(new Runnable() {

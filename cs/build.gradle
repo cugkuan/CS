@@ -52,7 +52,7 @@ afterEvaluate {
             release(MavenPublication) {
                 groupId = 'com.brightk.cs'
                 artifactId = 'cs'
-                version = '0.3.7'
+                version = '0.3.9'
                 from components.release
             }
         }

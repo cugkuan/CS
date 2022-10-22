@@ -19,15 +19,9 @@ public class Test1Activity extends AppCompatActivity {
         TextView tv = findViewById(R.id.tv_hello);
 
 
-        new UriRequestBuild("app://app2/service1")
-                .call(new OnRequestResultListener() {
-                    @Override
-                    public void result(UriRespond respond) {
-                        String text = (String) (respond.data);
+       String s= (String) new UriRequestBuild("app://app2/service1").connect().data;
 
-                        tv.setText(text);
-                    }
-                });
+       tv.setText(s);
 
 
 

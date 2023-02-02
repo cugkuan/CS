@@ -2,8 +2,6 @@ package com.k.plugin
 
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
-import com.android.utils.FileUtils
-import com.k.plugin.AutoInjector
 import org.gradle.api.Project
 import org.gradle.internal.impldep.org.eclipse.jgit.annotations.NonNull
 

@@ -3,7 +3,6 @@ package com.k.plugin.vistor.server
 import com.k.plugin.AutoInjector
 import com.k.plugin.CsServiceClassInfo
 import com.k.plugin.Logger
-import org.apache.http.util.TextUtils
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.Opcodes
 

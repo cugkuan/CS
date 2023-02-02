@@ -27,9 +27,10 @@ repositories {
 dependencies {
     gradleApi()
     localGroovy()
-    implementation("com.android.tools.build:gradle:4.2.2")
+    implementation("com.android.tools.build:gradle:7.3.0")
     implementation("org.ow2.asm:asm:9.1")
     implementation("org.ow2.asm:asm-commons:9.1")
+    implementation("com.android.tools:sdk-common:30.0.3")
 }
 
 

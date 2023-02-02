@@ -1,3 +1,10 @@
+rootProject.name = "Cs"
+includeBuild("AutoPlugin")
+include(":app")
+include(":cs")
+include(":test1")
+include(":test2")
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -12,11 +19,3 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "Cs"
-includeBuild("AutoPlugin")
-include ':app'
-include ':cs'
-include ':test1'
-include ':test2'
-
-

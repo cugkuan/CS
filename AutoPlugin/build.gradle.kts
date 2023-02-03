@@ -1,13 +1,15 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("groovy") // Groovy Language
     id("java-gradle-plugin") // Java Gradle Plugin
     id("maven-publish")
+    kotlin("jvm") version "1.8.0"
 }
 
 gradlePlugin {
     plugins.register("cs-plgin") {
         id = "com.brightk.cs"
-        implementationClass = "com.k.plugin.CsAutoPlugin"
+        implementationClass = "com.k.plugin.CsPlugin"
     }
 }
 
@@ -39,7 +41,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.brightk.cs"
             artifactId = "cs-plguin"
-            version = "0.1.0"
+            version = "0.2.1"
             from(components["java"])
         }
     }

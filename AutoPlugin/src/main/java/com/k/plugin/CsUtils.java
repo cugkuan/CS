@@ -8,8 +8,6 @@ import java.net.URI;
  * 这里的规则和 com.brightk.cs 中的逻辑保持一致，需要特别的注意
  */
 public class CsUtils {
-
-
     private static String checkNull(String value) {
         if (value == null) {
             return "";
@@ -17,7 +15,6 @@ public class CsUtils {
             return value;
         }
     }
-
     public static String getKey(URI uri) {
         return new StringBuilder()
                 .append(checkNull(uri.getScheme()))

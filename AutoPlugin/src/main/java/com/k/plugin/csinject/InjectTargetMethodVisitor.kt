@@ -35,5 +35,6 @@ internal class InjectTargetMethodVisitor(
         mv.visitInsn(RETURN)
         mv.visitMaxs(3, 3)
         mv.visitEnd()
+        Logger.error("服务注册完成")
     }
 }

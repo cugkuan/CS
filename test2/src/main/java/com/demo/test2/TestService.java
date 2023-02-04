@@ -10,6 +10,6 @@ import com.brightk.cs.core.annotation.CsUri;
 public class TestService implements CsService {
     @Override
     public void call(UriRequest uriRequest, OnRequestResultListener listener) {
-      listener.result(new UriRespond("我去其它的组件拿取东西"));
+      listener.result(new UriRespond("我去其它的组件拿取东西:跨服务数据传输验：=>"));
     }
 }

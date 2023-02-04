@@ -22,12 +22,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         findViewById(R.id.btn_click).setOnClickListener(v -> {
-
             Intent intent = new Intent();
             intent.setClass(this, Test1Activity.class);
             startActivity(intent);
         });
-
 //        UriRespond respond = new UriRequestBuild( "app://app1/service2")
 //                .connect();
 //
@@ -44,18 +42,14 @@ public class MainActivity extends AppCompatActivity {
 //                Toast.makeText(MainActivity.this, finalMsg,Toast.LENGTH_LONG).show();
 //            }
 //        });
-
-
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
                        UriRespond respond = new UriRequestBuild( "app://app1/service2")
                                 .connect();
-
                        String msg  = null;
                        if (respond.code == CS.CS_CODE_SUCCEED){
                            msg = respond.data.toString();
@@ -69,10 +63,8 @@ public class MainActivity extends AppCompatActivity {
                                Toast.makeText(MainActivity.this, finalMsg,Toast.LENGTH_LONG).show();
                            }
                        });
-
                     }
                 }).start();
-
             }
         },2000);
 

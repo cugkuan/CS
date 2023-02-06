@@ -1,6 +1,5 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
-    id("groovy") // Groovy Language
     id("java-gradle-plugin") // Java Gradle Plugin
     id("maven-publish")
     kotlin("jvm") version "1.8.0"
@@ -33,6 +32,8 @@ dependencies {
     implementation("org.ow2.asm:asm:9.1")
     implementation("org.ow2.asm:asm-commons:9.1")
     implementation("com.android.tools:sdk-common:30.0.3")
+    implementation("commons-io:commons-io:2.4")
+
 }
 
 

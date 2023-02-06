@@ -24,13 +24,11 @@ public class CsPluginUtils {
     /**
      *  继承服务是发现的对象
      */
-    public static String FIND_SERVICE_CLASS_TARGET = "com.brightk.cs.core.CsService";
+    public static String FIND_SERVICE_CLASS_TARGET = "com/brightk/cs/core/CsService";
     /**
      *
      */
     public static final String AUTO_REGISTER_CLASS = "com.brightk.cs.CS";
-    public static String[] ignorePackages;
-    public static String[] scanPackages;
     public static List<CsServiceClassInfo> csServiceClassInfoList = new ArrayList<>();
     static boolean isFinishInject = false;
     public static void clear() {

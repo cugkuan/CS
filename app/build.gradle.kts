@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("com.brightk.cs")
+    id("com.google.devtools.ksp")
+    id("org.jetbrains.kotlin.android")
 }
 
 csConfig {
@@ -46,4 +48,9 @@ dependencies {
     implementation(project(":test1"))
     implementation(project(":test2"))
     implementation(project(":cs"))
+
+    implementation(project(":CsProcessor"))
+    ksp(project(":CsProcessor"))
+
+
 }

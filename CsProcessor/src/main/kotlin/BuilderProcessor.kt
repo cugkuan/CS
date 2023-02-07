@@ -1,71 +1,70 @@
+import com.brightk.cs.core.ServiceType
+import com.brightk.cs.core.annotation.CsUri
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.*
 import com.google.devtools.ksp.validate
 import java.io.File
 import java.io.OutputStream
+import java.util.Collections
+import java.util.logging.Logger
+import kotlin.math.log
 
 
 class BuilderProcessor(
     val codeGenerator: CodeGenerator,
     val logger: KSPLogger
 ) : SymbolProcessor {
+    private var isProcess = false
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        val symbols = resolver.getSymbolsWithAnnotation(CS_URI_DES)
+        if (isProcess) return emptyList()
+        val csServiceClassInfos = Collections.synchronizedList(ArrayList<CsServiceClassInfo>())
+        val symbols = resolver.getSymbolsWithAnnotation(CsUri::class.java.name)
         val ret = symbols.filter { !it.validate() }.toList()
         symbols
             .filter { it is KSClassDeclaration && it.validate() }
-            .forEach { it.accept(BuilderVisitor(), Unit) }
+            .forEach { symbol ->
+                val ksAnnotation = symbol.annotations.getAnnotation(CsUri::class.java.simpleName)
+                val url = ksAnnotation.arguments.getParameterValue<String>("uri")
+                val flag = when (ksAnnotation.arguments.getParameterValue<Any>("type").toString()) {
+                    "com.brightk.cs.core.ServiceType.SINGLE" -> "b"
+                    "com.brightk.cs.core.ServiceType.NEW" -> "c"
+                    else -> "a"
+                }
+                val className = (symbol as KSClassDeclaration).qualifiedName!!.asString()
+                val serviceClassInfo = CsServiceClassInfo(className + flag, url)
+                csServiceClassInfos.add(serviceClassInfo)
+            }
+        // 创建 Java文件
+        val packageName = "com.brightk.cs.processor"
+        val className = "CS\$\$Processor"
+        val file = codeGenerator.createNewFile(Dependencies(false), packageName, className, "java")
+
+        file.appendText("package $packageName;\n\n")
+        file.appendText("import com.brightk.cs.CsPluginRegister;\n\n")
+        file.appendText("import com.brightk.cs.CsProcessor;\n\n")
+        file.appendText("public class $className implements CsProcessor {\n\n")
+        // 构建方法
+        file.appendText("@Override\n")
+        file.appendText("public void process(){\n")
+        csServiceClassInfos.forEach { info ->
+            logger.warn("${info.className} --> ${info.url}")
+            file.appendText("CsPluginRegister.register(\"${info.urlKey}\",\"${info.className}\");\n")
+        }
+        // 填充内容
+        file.appendText("}\n\n")
+        file.appendText("}\n")
+        file.close()
+        isProcess = true
         return ret
     }
 
-    inner class BuilderVisitor : KSVisitorVoid() {
-        override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
-            classDeclaration.primaryConstructor?.accept(this, data)
-        }
-
-        override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
-            val parent = function.parentDeclaration as KSClassDeclaration
-            val packageName = parent.containingFile!!.packageName.asString()
-            val className = "${parent.simpleName.asString()}Builder"
-            val file = codeGenerator.createNewFile(Dependencies(true, function.containingFile!!), packageName , className)
-            file.appendText("package $packageName\n\n")
-            file.appendText("import HELLO\n\n")
-            file.appendText("class $className{\n")
-            function.parameters.forEach {
-                val name = it.name!!.asString()
-                val typeName = StringBuilder(it.type.resolve().declaration.qualifiedName?.asString() ?: "<ERROR>")
-                val typeArgs = it.type.element!!.typeArguments
-                if (it.type.element!!.typeArguments.isNotEmpty()) {
-                    typeName.append("<")
-                    typeName.append(
-                            typeArgs.map {
-                                val type = it.type?.resolve()
-                                "${it.variance.label} ${type?.declaration?.qualifiedName?.asString() ?: "ERROR"}" +
-                                        if (type?.nullability == Nullability.NULLABLE) "?" else ""
-                            }.joinToString(", ")
-                    )
-                    typeName.append(">")
-                }
-                file.appendText("    private var $name: $typeName? = null\n")
-                file.appendText("    internal fun with${name.capitalize()}($name: $typeName): $className {\n")
-                file.appendText("        this.$name = $name\n")
-                file.appendText("        return this\n")
-                file.appendText("    }\n\n")
-            }
-            file.appendText("    internal fun build(): ${parent.qualifiedName!!.asString()} {\n")
-            file.appendText("        return ${parent.qualifiedName!!.asString()}(")
-            file.appendText(
-                function.parameters.map {
-                    "${it.name!!.asString()}!!"
-                }.joinToString(", ")
-            )
-            file.appendText(")\n")
-            file.appendText("    }\n")
-            file.appendText("}\n")
-            file.close()
-        }
+    override fun onError() {
+        super.onError()
     }
 
+    override fun finish() {
+        super.finish()
+    }
 }
 
 class BuilderProcessorProvider : SymbolProcessorProvider {

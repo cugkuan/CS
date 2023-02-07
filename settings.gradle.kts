@@ -20,3 +20,4 @@ dependencyResolutionManagement {
     }
 }
 include(":CsProcessor")
+include(":CsAnnotation")

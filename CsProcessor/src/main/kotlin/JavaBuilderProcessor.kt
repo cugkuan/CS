@@ -1,4 +1,4 @@
-import com.example.annotation.Builder
+import com.brightk.cs.core.annotation.CsUri
 import com.squareup.javapoet.*
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
@@ -14,7 +14,7 @@ class JavaBuilderProcessor : AbstractProcessor() {
         return SourceVersion.latestSupported()
     }
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
-        return mutableSetOf("com.example.annotation.Builder")
+        return mutableSetOf(CS_URI_DES)
     }
 
     private fun processType(typeElement: TypeElement) {
@@ -49,9 +49,8 @@ class JavaBuilderProcessor : AbstractProcessor() {
     }
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
-        val elements = roundEnv!!.getElementsAnnotatedWith(Builder::class.java)
-        elements.filterIsInstance<TypeElement>()
-                .map { processType(it) }
+        val elements = roundEnv?.getElementsAnnotatedWith(CsUri::class.java)
+        elements?.filterIsInstance<TypeElement>()?.map { processType(it) }
         return true
     }
 

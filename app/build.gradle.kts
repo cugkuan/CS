@@ -48,9 +48,6 @@ dependencies {
     implementation(project(":test1"))
     implementation(project(":test2"))
     implementation(project(":cs"))
-
-    implementation(project(":CsProcessor"))
     ksp(project(":CsProcessor"))
-
 
 }

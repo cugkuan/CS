@@ -30,6 +30,7 @@ android {
 }
 
 dependencies {
+    api(project(":CsAnnotation"))
     implementation("androidx.annotation:annotation:1.4.0")
 }
 

@@ -4,15 +4,13 @@ import com.google.devtools.ksp.validate
 import java.io.File
 import java.io.OutputStream
 
-fun OutputStream.appendText(str: String) {
-    this.write(str.toByteArray())
-}
+
 class BuilderProcessor(
     val codeGenerator: CodeGenerator,
     val logger: KSPLogger
 ) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        val symbols = resolver.getSymbolsWithAnnotation("com.example.annotation.Builder")
+        val symbols = resolver.getSymbolsWithAnnotation(CS_URI_DES)
         val ret = symbols.filter { !it.validate() }.toList()
         symbols
             .filter { it is KSClassDeclaration && it.validate() }

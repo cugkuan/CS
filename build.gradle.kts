@@ -14,6 +14,7 @@ tasks.register<Delete>("clean") {
 buildscript {
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
+       // classpath("com.brightk.cs:cs-processor:0.1.0")
     }
 }
 

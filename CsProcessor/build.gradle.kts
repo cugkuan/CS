@@ -20,6 +20,7 @@ sourceSets.main {
     java.srcDirs("src/main/kotlin")
 }
 
+
 publishing.repositories {
     maven {
         // 配置地址
@@ -37,17 +38,18 @@ val sourceJar:TaskProvider<Jar> by tasks.registering(Jar::class) {
     from(project.the<SourceSetContainer>()["main"].allSource)
 }
 
+artifacts {
+    sourceJar
+}
+
 
 publishing {
     publications {
         create<MavenPublication>("processor") {
             groupId = "com.brightk.cs"
             artifactId = "cs-processor"
-            version = "0.1.2"
-           
+            version = "0.1.3"
             from(components["java"])
-            artifact(sourceJar)
-
         }
     }
 }

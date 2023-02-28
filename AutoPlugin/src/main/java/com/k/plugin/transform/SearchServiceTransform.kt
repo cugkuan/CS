@@ -4,6 +4,7 @@ import com.android.build.api.transform.*
 import com.k.plugin.CsUtils
 import com.k.plugin.Logger
 import org.apache.commons.io.FileUtils
+import org.gradle.internal.impldep.com.google.common.io.Files
 import java.io.File
 import java.io.IOException
 import java.util.*
@@ -32,7 +33,7 @@ class SearchServiceTransform(
 
     fun getInjectFile(): Pair<File, File>? = targetFile.get()
     fun startTransform() {
-        if (isIncremental) {
+        if (isIncremental.not()) {
             outputProvider.deleteAll()
         }
         inputs.forEach { input ->
@@ -71,14 +72,11 @@ class SearchServiceTransform(
             }
             input.directoryInputs.forEach { directoryInput ->
                 val task = {
+                    scanClass(directoryInput.file)
                     val dest = outputProvider.getContentLocation(
-                        directoryInput.name,
-                        directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY
+                        directoryInput.name, directoryInput.contentTypes,
+                        directoryInput.scopes, Format.DIRECTORY
                     )
-                    scanDirectoryInput(directoryInput)
-                    /**
-                     * 这里如果使用增量更新很诡异，directoryInput.getChangedFiles 只包含了改变的文件
-                     */
                     FileUtils.copyDirectory(directoryInput.file, dest)
                     0
                 }
@@ -110,16 +108,47 @@ class SearchServiceTransform(
                     isIncludeTarget = true
                 }
             } catch (e: java.lang.Exception) {
-                e.printStackTrace()
             }
         }
         jarFile.close()
         return isIncludeTarget
     }
-
+    // directoryInput.changedFiles 中的文件只包含了改变的文件，真坑爹
     private fun scanDirectoryInput(directoryInput: DirectoryInput) {
-        scanClass(directoryInput.file)
-
+        val dest = outputProvider.getContentLocation(
+            directoryInput.name, directoryInput.contentTypes,
+            directoryInput.scopes, Format.DIRECTORY
+        )
+        val map = directoryInput.changedFiles
+        val dir = directoryInput.file
+        if (isIncremental) {
+            map.forEach { (file, status) ->
+                val destFilePath = file.absolutePath.replace(dir.absolutePath, dest.absolutePath)
+                val destFile = File(destFilePath)
+                when (status) {
+                    Status.NOTCHANGED -> {
+                        scanClass(file)
+                    }
+                    Status.CHANGED, Status.ADDED -> {
+                        try {
+                            FileUtils.touch(destFile)
+                        } catch (e: Exception) {
+                            Files.createParentDirs(destFile)
+                        }
+                        scanClass(file)
+                        if (file.isDirectory.not()) {
+                            FileUtils.copyFile(file, destFile)
+                        }
+                    }
+                    Status.REMOVED -> {
+                        file.deleteRecursively()
+                    }
+                }
+            }
+        } else {
+            scanClass(directoryInput.file)
+            FileUtils.copyDirectory(directoryInput.file, dest)
+        }
     }
 
     private fun scanClass(file: File) {

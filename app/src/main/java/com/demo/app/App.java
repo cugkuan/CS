@@ -3,6 +3,7 @@ package com.demo.app;
 import android.app.Application;
 
 import com.brightk.cs.CS;
+import com.brightk.cs.common.UriRequestBuild;
 
 public class App extends Application {
 
@@ -10,6 +11,8 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         CS.init();
+        new UriRequestBuild("app://app/service2")
+                .call();
     }
 
 }

@@ -42,7 +42,6 @@ internal class ServiceAnnotationVisitor(private val className: String,private va
     override fun visitEnd() {
         super.visitEnd()
         url?.let { url ->
-            Logger.error("$className==>$url")
             val c = className + flag
             val classInfo = CsServiceClassInfo(c, url)
             searchResultBack.invoke(classInfo)

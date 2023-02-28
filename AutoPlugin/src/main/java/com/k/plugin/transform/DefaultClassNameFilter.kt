@@ -19,14 +19,20 @@ class DefaultClassNameFilter : ClassNameFilter {
     }
 
     override fun filter(className: String): Boolean {
-        return if (CsPluginUtils.scanPackage.isNullOrEmpty().not() && CsPluginUtils.scanPackage.find { className.startsWith(it) } !=  null){
-            return  (className.endsWith("R.class") || className.contains("R$")
-                    || className.endsWith("BuildConfig.class"))
-        }else {
-            (whiteList.find { className.startsWith(it) } != null || className.endsWith("R.class") || className.contains(
-                "R$"
-            )
-                    || className.endsWith("BuildConfig.class"))
+        return if (className.endsWith(".class").not()) {
+            true
+        } else {
+            if (CsPluginUtils.scanPackage.isNullOrEmpty()
+                    .not() && CsPluginUtils.scanPackage.find { className.startsWith(it) } != null
+            ) {
+                (className.endsWith("R.class") || className.contains("R$")
+                        || className.endsWith("BuildConfig.class"))
+            } else {
+                (whiteList.find { className.startsWith(it) } != null || className.endsWith("R.class") || className.contains(
+                    "R$"
+                )
+                        || className.endsWith("BuildConfig.class"))
+            }
         }
     }
 

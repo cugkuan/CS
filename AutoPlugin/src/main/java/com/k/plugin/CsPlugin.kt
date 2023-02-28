@@ -13,7 +13,6 @@ abstract class CsPlugin :Plugin<Project> {
         if (!isApp) {
             return
         }
-        Logger.error("CS自动注册插件开始工作")
         project.extensions.create("csConfig",CsConfig::class.java)
         CsPluginUtils.clear()
         val android = project.extensions.getByType(AppExtension::class.java)

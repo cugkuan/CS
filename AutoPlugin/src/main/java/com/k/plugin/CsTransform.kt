@@ -31,6 +31,9 @@ class CsTransform(val project: Project) : Transform() {
     }
 
     override fun transform(transformInvocation: TransformInvocation) {
+
+        val begin = System.currentTimeMillis()
+        Logger.error("CS自动注册插件开始工作.........")
         val serviceClassInfos: MutableList<CsServiceClassInfo> =
             Collections.synchronizedList(ArrayList())
         val transform = SearchServiceTransform(transformInvocation) { classBytes ->
@@ -40,9 +43,12 @@ class CsTransform(val project: Project) : Transform() {
             }, 0)
         }
         transform.startTransform()
+        Logger.error("一共找到${serviceClassInfos.size}个服务,共花费${System.currentTimeMillis() - begin}毫秒")
+        serviceClassInfos.forEach {
+            Logger.error("${it.className}==>${it.url}")
+        }
         val targetFile = transform.getInjectFile()
         if (targetFile != null) {
-            Logger.info("找到目标文件${targetFile.first.name}，开始注入,.........")
             try {
                 val jarFile = JarFile(targetFile.first)
                 val tempJar = File(targetFile.second.absolutePath.replace(".jar","temp.jar"))
@@ -54,7 +60,6 @@ class CsTransform(val project: Project) : Transform() {
                     val zipEntry = ZipEntry(entry.name)
                     jarOutputStream.putNextEntry(zipEntry)
                     if (entry.name == "com/brightk/cs/CS.class") {
-                        Logger.info("成功注入.......")
                         jarFile.getInputStream(entry)?.use { stream ->
                             stream.readAllBytes()?.takeIf {
                                 it.isNotEmpty()
@@ -86,6 +91,6 @@ class CsTransform(val project: Project) : Transform() {
         }else{
             Logger.error("未找到注入目标")
         }
-        Logger.info("CS工作结束")
+        Logger.error("CS工作结束!一共花费${System.currentTimeMillis() - begin}毫秒")
     }
 }

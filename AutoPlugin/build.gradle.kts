@@ -2,10 +2,10 @@
 plugins {
     id("java-gradle-plugin") // Java Gradle Plugin
     id("maven-publish")
-    kotlin("jvm") version "1.8.0"
+    id("org.jetbrains.kotlin.jvm") version "1.6.10"
 }
 group = "com.brightk.cs"
-version = "1.0.1"
+version = "1.0.8"
 
 gradlePlugin {
     plugins {

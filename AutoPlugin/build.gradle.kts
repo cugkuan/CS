@@ -4,23 +4,19 @@ plugins {
     id("maven-publish")
     kotlin("jvm") version "1.8.0"
 }
+group = "com.brightk.cs"
+version = "1.0.1"
 
 gradlePlugin {
-    plugins.register("cs-plgin") {
-        id = "com.brightk.cs"
-        implementationClass = "com.k.plugin.CsPlugin"
+    plugins {
+        register("cs-plugin") {
+            id = "com.brightk.cs"
+            implementationClass = "com.k.plugin.CsPlugin"
+        }
     }
 }
 
 repositories {
-    maven {
-        credentials {
-            username = "qzdapp"
-            password = "Zhiyun123"
-        }
-        url = uri("http://maven.qizhidao.net:8081/repository/packages-app/app/android")
-        isAllowInsecureProtocol = true
-    }
     mavenCentral()
     google()
 }
@@ -38,11 +34,19 @@ dependencies {
 
 
 publishing {
+    repositories {
+        maven {
+            credentials {
+                username = "qzdapp"
+                password = "Zhiyun123"
+            }
+            url = uri("http://maven.qizhidao.net:8081/repository/packages-app/app/android")
+            isAllowInsecureProtocol = true
+        }
+    }
     publications {
         create<MavenPublication>("maven") {
-            groupId = "com.brightk.cs"
-            artifactId = "cs-plguin"
-            version = "0.2.1"
+            artifactId = "cs-plugin"
             from(components["java"])
         }
     }

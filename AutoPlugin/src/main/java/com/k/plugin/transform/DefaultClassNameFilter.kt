@@ -1,5 +1,7 @@
 package com.k.plugin.transform
 
+import com.k.plugin.CsPluginUtils
+
 class DefaultClassNameFilter : ClassNameFilter {
 
     private val whiteList = mutableListOf<String>().apply {
@@ -17,8 +19,15 @@ class DefaultClassNameFilter : ClassNameFilter {
     }
 
     override fun filter(className: String): Boolean {
-       return  whiteList.find { className.startsWith(it) } != null || className.endsWith("R.class") || className.contains("R$")
-               || className.endsWith("BuildConfig.class")
+        return if (CsPluginUtils.scanPackage.isNullOrEmpty().not() && CsPluginUtils.scanPackage.find { className.startsWith(it) } !=  null){
+            return  (className.endsWith("R.class") || className.contains("R$")
+                    || className.endsWith("BuildConfig.class"))
+        }else {
+            (whiteList.find { className.startsWith(it) } != null || className.endsWith("R.class") || className.contains(
+                "R$"
+            )
+                    || className.endsWith("BuildConfig.class"))
+        }
     }
 
     override fun isTargetClass(className: String) = (className == "com/brightk/cs/CS.class")

@@ -18,6 +18,9 @@ abstract class CsPlugin :Plugin<Project> {
         CsPluginUtils.clear()
         val android = project.extensions.getByType(AppExtension::class.java)
         android.registerTransform(CsTransform(project))
+        project.afterEvaluate {
+            CsPluginUtils.scanPackage = project.extensions.getByType(CsConfig::class.java).scanPackages
+        }
     }
 }
 

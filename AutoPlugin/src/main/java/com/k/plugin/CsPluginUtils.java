@@ -31,6 +31,8 @@ public class CsPluginUtils {
     public static final String AUTO_REGISTER_CLASS = "com.brightk.cs.CS";
     public static List<CsServiceClassInfo> csServiceClassInfoList = new ArrayList<>();
     static boolean isFinishInject = false;
+
+    public static String[] scanPackage;
     public static void clear() {
         csServiceClassInfoList.clear();
         isFinishInject = false;

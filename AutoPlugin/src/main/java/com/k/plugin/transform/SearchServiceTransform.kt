@@ -75,7 +75,11 @@ class SearchServiceTransform(
                         directoryInput.name,
                         directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY
                     )
-                    scanDirectoryInput(directoryInput, dest)
+                    scanDirectoryInput(directoryInput)
+                    /**
+                     * 这里如果使用增量更新很诡异，directoryInput.getChangedFiles 只包含了改变的文件
+                     */
+                    FileUtils.copyDirectory(directoryInput.file, dest)
                     0
                 }
                 tasks.add(task)
@@ -113,12 +117,9 @@ class SearchServiceTransform(
         return isIncludeTarget
     }
 
-    /**
-     * 这里如果使用增量更新很诡异，directoryInput.getChangedFiles 只包含了改变的文件
-     */
-    private fun scanDirectoryInput(directoryInput: DirectoryInput, destDir: File) {
+    private fun scanDirectoryInput(directoryInput: DirectoryInput) {
         scanClass(directoryInput.file)
-        FileUtils.copyDirectory(directoryInput.file, destDir)
+
     }
 
     private fun scanClass(file: File) {

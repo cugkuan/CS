@@ -1,8 +1,8 @@
 package com.k.plugin;
 
 public class CsServiceClassInfo {
-    public String className;
-    public String  url;
+    public final String className;
+    public final String  url;
     public final String  urlKey;
     public CsServiceClassInfo(String className,String url) {
         this.className = className.replace('/','.');

@@ -29,6 +29,16 @@ android {
     }
 }
 
+val sourceJar:TaskProvider<Jar> by tasks.registering(Jar::class) {
+    archiveClassifier.set("sources")
+    from(project.the<SourceSetContainer>()["main"].allSource)
+}
+
+artifacts {
+    sourceJar
+}
+
+
 dependencies {
     implementation("androidx.annotation:annotation:1.4.0")
 }

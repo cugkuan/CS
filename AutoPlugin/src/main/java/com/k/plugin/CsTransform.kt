@@ -3,6 +3,7 @@ package com.k.plugin
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
 import com.k.plugin.csinject.CSInjectClassVisitor
+import com.k.plugin.csinterceptor.InterceptorClassVisitor
 import com.k.plugin.csserch.ServiceClassVisitor
 import com.k.plugin.transform.SearchServiceTransform
 import org.apache.commons.io.FileUtils
@@ -15,6 +16,7 @@ import java.util.*
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
+import kotlin.collections.ArrayList
 
 class CsTransform(val project: Project) : Transform() {
 
@@ -23,9 +25,11 @@ class CsTransform(val project: Project) : Transform() {
     override fun getInputTypes(): MutableSet<QualifiedContent.ContentType> {
         return TransformManager.CONTENT_CLASS
     }
+
     override fun getScopes(): MutableSet<in QualifiedContent.Scope> {
         return TransformManager.SCOPE_FULL_PROJECT
     }
+
     override fun isIncremental(): Boolean {
         return true
     }
@@ -36,14 +40,19 @@ class CsTransform(val project: Project) : Transform() {
         Logger.error("CS自动注册插件开始工作.........")
         val serviceClassInfos: MutableList<CsServiceClassInfo> =
             Collections.synchronizedList(ArrayList())
+        val interceptors: MutableList<InterceptorClassInfo> =
+            Collections.synchronizedList(ArrayList())
         val transform = SearchServiceTransform(transformInvocation) { classBytes ->
             val classReader = ClassReader(classBytes)
             classReader.accept(ServiceClassVisitor { info ->
                 serviceClassInfos.add(info)
             }, 0)
+            classReader.accept(InterceptorClassVisitor { info ->
+                interceptors.add(info)
+            }, 0)
         }
         transform.startTransform()
-        Logger.error("一共找到${serviceClassInfos.size}个服务,共花费${System.currentTimeMillis() - begin}毫秒")
+        Logger.error("一共找到${serviceClassInfos.size}个服务,${interceptors.size}个Interceptor;共花费${System.currentTimeMillis() - begin}毫秒")
         serviceClassInfos.forEach {
             Logger.error("${it.className}==>${it.url}")
         }
@@ -51,8 +60,8 @@ class CsTransform(val project: Project) : Transform() {
         if (targetFile != null) {
             try {
                 val jarFile = JarFile(targetFile.first)
-                val tempJar = File(targetFile.second.absolutePath.replace(".jar","temp.jar"))
-                if (tempJar.exists()){
+                val tempJar = File(targetFile.second.absolutePath.replace(".jar", "temp.jar"))
+                if (tempJar.exists()) {
                     FileUtils.forceDelete(tempJar)
                 }
                 val jarOutputStream = JarOutputStream(FileOutputStream(tempJar))
@@ -71,14 +80,14 @@ class CsTransform(val project: Project) : Transform() {
                                         ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS
                                     )
                                 val targetClassVisitor =
-                                    CSInjectClassVisitor(classWriter, serviceClassInfos)
+                                    CSInjectClassVisitor(classWriter, serviceClassInfos,interceptors)
                                 classReader.accept(targetClassVisitor, ClassReader.EXPAND_FRAMES)
                                 jarOutputStream.write(classWriter.toByteArray())
                             }
-                        }?: run {
+                        } ?: run {
                             jarOutputStream.write(jarFile.getInputStream(entry).readBytes())
                         }
-                    }else{
+                    } else {
                         jarOutputStream.write(jarFile.getInputStream(entry).readBytes())
                     }
                     jarOutputStream.closeEntry()
@@ -88,7 +97,7 @@ class CsTransform(val project: Project) : Transform() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }else{
+        } else {
             Logger.error("未找到注入目标")
         }
         Logger.error("CS工作结束!一共花费${System.currentTimeMillis() - begin}毫秒")

@@ -30,10 +30,10 @@ public class ComponentServiceManger {
     }
 
     public static void register(String uri, Class<CsService> service) {
-        register(uri,service,ServiceType.DEFAULT);
+        register(uri, service, ServiceType.DEFAULT);
     }
 
-    public static void unRegister(String uri){
+    public static void unRegister(String uri) {
         String key = CsUtils.getKey(uri);
         csConfig.remove(key);
     }
@@ -60,8 +60,8 @@ public class ComponentServiceManger {
         String config = csConfig.get(key);
         if (!TextUtils.isEmpty(config)) {
             try {
-                int index = config.length() -1;
-                char flag = config.charAt(index );
+                int index = config.length() - 1;
+                char flag = config.charAt(index);
                 String className = config.substring(0, index);
                 Class<CsService> c = (Class<CsService>) Class.forName(className);
                 if (c != null) {
@@ -72,7 +72,6 @@ public class ComponentServiceManger {
                 e.printStackTrace();
             }
         }
-
         return null;
     }
 }

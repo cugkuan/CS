@@ -25,6 +25,12 @@ public class CsPluginUtils {
      *  继承服务是发现的对象
      */
     public static String FIND_SERVICE_CLASS_TARGET = "com/brightk/cs/core/CsService";
+
+    public static String FIND_INTERCEPTOR_CLASS_TARGET = "com/brightk/cs/core/CsInterceptor";
+
+    public static String INTERCEPTOR_NAME = "name";
+    public static String INTERCEPTOR_PRIORITY = "priority";
+
     /**
      *
      */

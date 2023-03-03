@@ -35,20 +35,24 @@ public class UriRespond {
     }
 
 
-    public static UriRespond SUCCEED(){
-        return new  UriRespond(CS.CS_CODE_SUCCEED);
+    public static UriRespond SUCCEED() {
+        return new UriRespond(CS.CS_CODE_SUCCEED);
     }
-    public static UriRespond SUCCEED(Object data){
-        return new UriRespond(CS.CS_CODE_SUCCEED,data);
+
+    public static UriRespond SUCCEED(Object data) {
+        return new UriRespond(CS.CS_CODE_SUCCEED, data);
     }
-    public static UriRespond NOTFIND(UriRequest request){
-        return new UriRespond(CS.CS_CODE_NOT_FIND,new Throwable("未找到"+ request.getUri()));
+
+    public static UriRespond NOTFIND(UriRequest request) {
+        return new UriRespond(CS.CS_CODE_NOT_FIND, new CsException("未找到" + request.getUri()));
     }
-    public static UriRespond CONTEXTOUT(){
-        return  new UriRespond(CS.CS_CODE_SERVICE_CONTEXT_OUT, new Throwable("context缺失"));
+
+    public static UriRespond CONTEXTOUT() {
+        return new UriRespond(CS.CS_CODE_SERVICE_CONTEXT_OUT, new CsException("context缺失"));
     }
-    public static UriRespond LACKPARAMS(String msg){
-        return new UriRespond(CS.CS_CODE_SERVICE_LACK_PARAMS,new Throwable(msg));
+
+    public static UriRespond LACKPARAMS(String msg) {
+        return new UriRespond(CS.CS_CODE_SERVICE_LACK_PARAMS, new CsException(msg));
     }
 
 

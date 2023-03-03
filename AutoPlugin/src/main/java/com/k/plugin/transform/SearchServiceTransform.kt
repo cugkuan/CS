@@ -133,7 +133,7 @@ class SearchServiceTransform(
                         try {
                             FileUtils.touch(destFile)
                         } catch (e: Exception) {
-                            Files.createParentDirs(destFile)
+                           // Files.createParentDirs(destFile)
                         }
                         scanClass(file)
                         if (file.isDirectory.not()) {
@@ -153,6 +153,7 @@ class SearchServiceTransform(
 
     private fun scanClass(file: File) {
         if (file.isFile) {
+            Logger.error(file.name)
             if (filter.filter(file.name).not()) {
                 file.inputStream().use { stream ->
                     stream.readAllBytes().takeIf {

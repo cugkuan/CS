@@ -36,12 +36,7 @@ dependencies {
 publishing {
     repositories {
         maven {
-            credentials {
-                username = "qzdapp"
-                password = "Zhiyun123"
-            }
-            url = uri("http://maven.qizhidao.net:8081/repository/packages-app/app/android")
-            isAllowInsecureProtocol = true
+            url = uri( "https://jitpack.io")
         }
     }
     publications {

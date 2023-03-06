@@ -5,15 +5,12 @@ plugins {
 
 android {
     compileSdk = 30
-
     defaultConfig {
         minSdk = 21
         minSdk = 31
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
-
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
@@ -27,43 +24,39 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
-
-val sourceJar:TaskProvider<Jar> by tasks.registering(Jar::class) {
-    archiveClassifier.set("sources")
-    from(project.the<SourceSetContainer>()["main"].allSource)
-}
-
-artifacts {
-    sourceJar
-}
-
-
+group = "com.brightk.cs"
+version = "1.0.0"
 dependencies {
     implementation("androidx.annotation:annotation:1.4.0")
 }
 
-publishing.repositories {
-    maven {
-        // 配置地址
-        credentials {
-            username = "qzdapp"
-            password = "Zhiyun123"
+publishing {
+    repositories {
+        maven {
+            // 配置地址
+            credentials {
+                username = "qzdapp"
+                password = "Zhiyun123"
+            }
+            url = uri("http://maven.qizhidao.net:8081/repository/packages-app/app/android")
+            isAllowInsecureProtocol = true
         }
-        url = uri("http://maven.qizhidao.net:8081/repository/packages-app/app/android")
-        isAllowInsecureProtocol = true
     }
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("release") {
-                groupId = "com.brightk.cs"
-                artifactId = "cs"
-                version = "0.3.9"
-                artifact("$buildDir/outputs/aar/${artifactId}-release.aar")
+    publications {
+        create<MavenPublication>("release") {
+            artifactId = "cs"
+            afterEvaluate {
+                from(components["release"])
             }
         }
     }
 }
+
+

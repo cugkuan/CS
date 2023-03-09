@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id("com.brightk.cs")
+    id("top.brightk.cs")
 }
 
 csConfig {

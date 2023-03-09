@@ -1,26 +1,27 @@
+import org.jetbrains.kotlin.konan.properties.Properties
 
 plugins {
     id("java-gradle-plugin") // Java Gradle Plugin
     id("maven-publish")
     id("org.jetbrains.kotlin.jvm") version "1.6.10"
+    id("signing")
 }
-group = "com.brightk.cs"
+group = "top.brightk"
 version = "1.0.8"
+
 
 gradlePlugin {
     plugins {
         register("cs-plugin") {
-            id = "com.brightk.cs"
+            id = "top.brightk.cs"
             implementationClass = "com.k.plugin.CsPlugin"
         }
     }
 }
-
 repositories {
     mavenCentral()
     google()
 }
-
 dependencies {
     gradleApi()
     localGroovy()
@@ -29,20 +30,47 @@ dependencies {
     implementation("org.ow2.asm:asm-commons:9.1")
     implementation("com.android.tools:sdk-common:30.0.3")
     implementation("commons-io:commons-io:2.4")
+}
 
+ext {
+    val file = rootProject.file("../local.properties")
+    if (file.exists()) {
+        val properties = Properties().apply {
+            load(file.inputStream())
+        }
+        set("ossUsername", properties.getProperty("ossrhUsername"))
+        set("ossPassword", properties.getProperty("ossrhPassword"))
+    }
 }
 
 
 publishing {
     repositories {
         maven {
-            url = uri( "https://jitpack.io")
+            credentials {
+                username = project.ext.get("ossUsername") as String
+                password = project.ext.get("ossPassword") as String
+
+                logger.warn("$username --- $password")
+            }
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            group = "top.brightk"
         }
     }
     publications {
         create<MavenPublication>("maven") {
             artifactId = "cs-plugin"
-            from(components["java"])
+            groupId = "top.brightk"
+            afterEvaluate {
+                from(components["java"])
+            }
+            pom {
+                signing {
+                    sign(configurations.archives.get())
+                }
+            }
+
         }
     }
 }
+

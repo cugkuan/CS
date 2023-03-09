@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("maven-publish")
+    id("signing")
 }
 
 android {
@@ -31,23 +32,35 @@ android {
         }
     }
 }
-group = "com.brightk.cs"
+group = "top.brightk"
 version = "1.0.0"
+
 dependencies {
     implementation("androidx.annotation:annotation:1.4.0")
 }
 
+
 publishing {
     repositories {
         maven {
-            url = uri( "https://jitpack.io")
+            credentials {
+                username = rootProject.ext.get("ossUsername") as String
+                password = rootProject.ext.get("ossPassword") as String
+            }
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
         }
     }
     publications {
         create<MavenPublication>("release") {
             artifactId = "cs"
+            groupId = "top.brightk"
             afterEvaluate {
                 from(components["release"])
+            }
+            pom {
+                signing {
+                    sign(publishing.publications["release"])
+                }
             }
         }
     }

@@ -4,7 +4,7 @@ plugins {
     id("com.android.application") version "7.3.0" apply false
     id("com.android.library") version "7.3.0" apply false
     id("top.brightk.cs") apply false
-    kotlin("jvm") version "1.6.10" apply false
+    kotlin("jvm") version "1.7.21" apply false
 }
 
 

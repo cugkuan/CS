@@ -4,10 +4,8 @@ import com.android.build.api.transform.*
 import com.k.plugin.CsUtils
 import com.k.plugin.Logger
 import org.apache.commons.io.FileUtils
-import org.gradle.internal.impldep.com.google.common.io.Files
+import org.gradle.util.internal.JarUtil
 import java.io.File
-import java.io.IOException
-import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ForkJoinPool
@@ -40,10 +38,13 @@ class SearchServiceTransform(
             input.jarInputs.forEach { jarInput ->
                 val task = Callable {
                     val status = jarInput.status
-                    var destName = jarInput.file.name
-                    val hexName = CsUtils.getMD5(jarInput.file.absolutePath)
+//                    var destName = jarInput.file.name
+//                    val hexName = CsUtils.getMD5(jarInput.file.absolutePath).substring(0,8)
+//                    if (destName?.endsWith(".jar") == true && destName?.length?:0 > 4){
+//                        destName = destName.substring(0,destName.length -4)
+//                    }
                     val destFile: File = outputProvider.getContentLocation(
-                        "$destName-$hexName",
+                        jarInput.file.absolutePath,
                         jarInput.contentTypes, jarInput.scopes, Format.JAR
                     )
                     val jarFile = JarFile(jarInput.file)
@@ -52,7 +53,11 @@ class SearchServiceTransform(
                             Status.NOTCHANGED -> {
                                 scanJar(jarFile, jarInput.file, destFile)
                             }
-                            Status.ADDED, Status.CHANGED -> {
+                            Status.ADDED ->{
+                                scanJar(jarFile, jarInput.file, destFile)
+                                FileUtils.copyFile(jarInput.file,destFile  )
+                            }
+                            Status.CHANGED -> {
                                 scanJar(jarFile, jarInput.file, destFile)
                                 FileUtils.copyFile(jarInput.file, destFile)
                             }

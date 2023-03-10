@@ -47,7 +47,12 @@ publishing {
                 username = rootProject.ext.get("ossUsername") as String
                 password = rootProject.ext.get("ossPassword") as String
             }
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            val publicUrl = if ((version as? String)?.endsWith("SNAPSHOTS") == true) {
+                "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            } else {
+                "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            }
+            url = uri(publicUrl)
         }
     }
     publications {
@@ -60,6 +65,28 @@ publishing {
             pom {
                 signing {
                     sign(publishing.publications["release"])
+                }
+
+                name.set("CS")
+                description.set(rootProject.properties["POM_DES"] as? String)
+                url.set(rootProject.properties["POM_URL"] as? String)
+                licenses {
+                    license {
+                        name.set(rootProject.properties["POM_LICENCE_NAME"] as? String)
+                        url.set(rootProject.properties["POM_LICENCE_URL"] as? String)
+                    }
+                }
+                developers {
+                    developer {
+                        id.set(rootProject.properties["AUTHOR_NAME"] as? String)
+                        name.set(rootProject.properties["AUTHOR_NAME"] as? String)
+                        email.set(rootProject.properties["POM_EMAIL"] as? String)
+                    }
+                }
+                scm {
+                    connection.set(rootProject.properties["POM_URL"] as? String)
+                    developerConnection.set(rootProject.properties["POM_SCM"] as? String)
+                    url.set(rootProject.properties["POM_SCM"] as? String)
                 }
             }
         }

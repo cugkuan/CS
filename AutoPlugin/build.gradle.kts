@@ -3,11 +3,11 @@ import org.jetbrains.kotlin.konan.properties.Properties
 plugins {
     id("java-gradle-plugin") // Java Gradle Plugin
     id("maven-publish")
-    id("org.jetbrains.kotlin.jvm") version "1.6.10"
+    id("org.jetbrains.kotlin.jvm") version "1.7.21"
     id("signing")
 }
 group = "top.brightk"
-version = "1.0.8"
+version = "1.0.9"
 
 
 gradlePlugin {
@@ -53,7 +53,12 @@ publishing {
 
                 logger.warn("$username --- $password")
             }
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            val publicUrl = if ((version as? String)?.endsWith("SNAPSHOTS") == true) {
+                "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            } else {
+                "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            }
+            url = uri(publicUrl)
             group = "top.brightk"
         }
     }
@@ -68,8 +73,29 @@ publishing {
                 signing {
                     sign(configurations.archives.get())
                 }
+                // public maven must
+                name.set("CS plugin")
+                description.set("CS plugin,work for CS;CS插件，服务拦截器自动注册")
+                url.set(rootProject.properties["POM_URL"] as? String)
+                licenses {
+                    license {
+                        name.set(rootProject.properties["POM_LICENCE_NAME"] as? String)
+                        url.set(rootProject.properties["POM_LICENCE_URL"] as? String)
+                    }
+                }
+                developers {
+                    developer {
+                        id.set(rootProject.properties["AUTHOR_NAME"] as? String)
+                        name.set(rootProject.properties["AUTHOR_NAME"] as? String)
+                        email.set(rootProject.properties["POM_EMAIL"] as? String)
+                    }
+                }
+                scm {
+                    connection.set(rootProject.properties["POM_URL"] as? String)
+                    developerConnection.set(rootProject.properties["POM_SCM"] as? String)
+                    url.set(rootProject.properties["POM_URL"] as? String)
+                }
             }
-
         }
     }
 }

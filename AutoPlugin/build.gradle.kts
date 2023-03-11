@@ -9,7 +9,6 @@ plugins {
 group = "top.brightk"
 version = "1.0.9"
 
-
 gradlePlugin {
     plugins {
         register("cs-plugin") {
@@ -22,6 +21,18 @@ repositories {
     mavenCentral()
     google()
 }
+
+
+tasks.register<Jar>("sourcesJar") {
+    archiveClassifier.set("sources")
+    from(sourceSets.main.get().allJava)
+}
+
+tasks.register<Jar>("javadocJar") {
+    archiveClassifier.set("javadoc")
+    from(tasks.javadoc.get().destinationDir)
+}
+
 dependencies {
     gradleApi()
     localGroovy()
@@ -31,7 +42,6 @@ dependencies {
     implementation("com.android.tools:sdk-common:30.0.3")
     implementation("commons-io:commons-io:2.4")
 }
-
 ext {
     val file = rootProject.file("../local.properties")
     if (file.exists()) {
@@ -40,6 +50,12 @@ ext {
         }
         set("ossUsername", properties.getProperty("ossrhUsername"))
         set("ossPassword", properties.getProperty("ossrhPassword"))
+
+        allprojects{
+            extra["signing.keyId"] = properties.getProperty("signing.keyId")
+            extra["signing.secretKeyRingFile"] = properties.getProperty("signing.password")
+            extra["signing.password"] = properties.getProperty("signing.secretKeyRingFile")
+        }
     }
 }
 
@@ -50,10 +66,8 @@ publishing {
             credentials {
                 username = project.ext.get("ossUsername") as String
                 password = project.ext.get("ossPassword") as String
-
-                logger.warn("$username --- $password")
             }
-            val publicUrl = if ((version as? String)?.endsWith("SNAPSHOTS") == true) {
+            val publicUrl = if (version.toString().endsWith("SNAPSHOT")) {
                 "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             } else {
                 "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -63,40 +77,45 @@ publishing {
         }
     }
     publications {
-        create<MavenPublication>("maven") {
+        create<MavenPublication>("pluginCS") {
             artifactId = "cs-plugin"
             groupId = "top.brightk"
-            afterEvaluate {
-                from(components["java"])
-            }
+            from(components["java"])
+            artifact(tasks["sourcesJar"])
+            artifact(tasks["javadocJar"])
             pom {
-                signing {
-                    sign(configurations.archives.get())
-                }
                 // public maven must
                 name.set("CS plugin")
                 description.set("CS plugin,work for CS;CS插件，服务拦截器自动注册")
-                url.set(rootProject.properties["POM_URL"] as? String)
+                val pomUrl = "https://github.com/cugkuan/CS"
+                val pomScm = "https://github.com/cugkuan/CS.git"
+                url.set(pomUrl)
                 licenses {
                     license {
-                        name.set(rootProject.properties["POM_LICENCE_NAME"] as? String)
-                        url.set(rootProject.properties["POM_LICENCE_URL"] as? String)
+                        name.set("The Apache Software License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
                     }
                 }
                 developers {
                     developer {
-                        id.set(rootProject.properties["AUTHOR_NAME"] as? String)
-                        name.set(rootProject.properties["AUTHOR_NAME"] as? String)
-                        email.set(rootProject.properties["POM_EMAIL"] as? String)
+                        id.set("BrightK")
+                        name.set("BrightK")
+                        email.set("cugkuan@163.com")
                     }
                 }
                 scm {
-                    connection.set(rootProject.properties["POM_URL"] as? String)
-                    developerConnection.set(rootProject.properties["POM_SCM"] as? String)
-                    url.set(rootProject.properties["POM_URL"] as? String)
+                    connection.set(pomUrl)
+                    developerConnection.set(pomScm)
+                    url.set(pomUrl)
                 }
             }
         }
+    }
+}
+
+afterEvaluate {
+    signing {
+        sign(publishing.publications)
     }
 }
 

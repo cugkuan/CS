@@ -23,6 +23,12 @@ ext {
         }
         set("ossUsername",properties.getProperty("ossrhUsername"))
         set("ossPassword",properties.getProperty("ossrhPassword"))
+
+        allprojects{
+            extra["signing.keyId"] = properties.getProperty("signing.keyId")
+            extra["signing.secretKeyRingFile"] = properties.getProperty("signing.secretKeyRingFile")
+            extra["signing.password"] = properties.getProperty("signing.password")
+        }
     }
 }
 

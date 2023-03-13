@@ -7,7 +7,7 @@ plugins {
     id("signing")
 }
 group = "top.brightk"
-version = "1.0.9"
+version = "1.0.0"
 
 gradlePlugin {
     plugins {
@@ -53,8 +53,8 @@ ext {
 
         allprojects{
             extra["signing.keyId"] = properties.getProperty("signing.keyId")
-            extra["signing.secretKeyRingFile"] = properties.getProperty("signing.password")
-            extra["signing.password"] = properties.getProperty("signing.secretKeyRingFile")
+            extra["signing.secretKeyRingFile"] = properties.getProperty("signing.secretKeyRingFile")
+            extra["signing.password"] = properties.getProperty("signing.password")
         }
     }
 }
@@ -67,13 +67,15 @@ publishing {
                 username = project.ext.get("ossUsername") as String
                 password = project.ext.get("ossPassword") as String
             }
-            val publicUrl = if (version.toString().endsWith("SNAPSHOT")) {
-                "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-            } else {
-                "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            logger.warn(version.toString())
+            val publicUrl  = when{
+                version.toString().endsWith("SNAPSHOT") -> "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                else ->  "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
             }
             url = uri(publicUrl)
             group = "top.brightk"
+
+            isAllowInsecureProtocol = true
         }
     }
     publications {

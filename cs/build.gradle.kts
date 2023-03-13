@@ -8,7 +8,6 @@ android {
     compileSdk = 30
     defaultConfig {
         minSdk = 21
-        minSdk = 31
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
@@ -33,7 +32,7 @@ android {
     }
 }
 group = "top.brightk"
-version = "1.0.0"
+version = "1.0.1"
 
 dependencies {
     implementation("androidx.annotation:annotation:1.4.0")

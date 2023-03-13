@@ -38,33 +38,25 @@ class SearchServiceTransform(
             input.jarInputs.forEach { jarInput ->
                 val task = Callable {
                     val status = jarInput.status
-//                    var destName = jarInput.file.name
-//                    val hexName = CsUtils.getMD5(jarInput.file.absolutePath).substring(0,8)
-//                    if (destName?.endsWith(".jar") == true && destName?.length?:0 > 4){
-//                        destName = destName.substring(0,destName.length -4)
-//                    }
+                    var destName = jarInput.file.name
+                    val hexName = CsUtils.getMD5(jarInput.file.absolutePath)
                     val destFile: File = outputProvider.getContentLocation(
-                        jarInput.file.absolutePath,
+                        "$destName-$hexName",
                         jarInput.contentTypes, jarInput.scopes, Format.JAR
                     )
                     val jarFile = JarFile(jarInput.file)
                     if (isIncremental) {
                         when (status) {
-                            Status.NOTCHANGED -> {
+                            Status.NOTCHANGED,Status.ADDED,Status.REMOVED-> {
                                 scanJar(jarFile, jarInput.file, destFile)
-                            }
-                            Status.ADDED ->{
-                                scanJar(jarFile, jarInput.file, destFile)
-                                FileUtils.copyFile(jarInput.file,destFile  )
-                            }
-                            Status.CHANGED -> {
-                                scanJar(jarFile, jarInput.file, destFile)
-                                FileUtils.copyFile(jarInput.file, destFile)
                             }
                             Status.REMOVED -> {
                                 if (destFile.exists()) {
                                     FileUtils.forceDelete(destFile)
                                 }
+                            }
+                            else -> {
+                                scanJar(jarFile, jarInput.file, destFile)
                             }
                         }
                     } else {
@@ -117,43 +109,6 @@ class SearchServiceTransform(
         }
         jarFile.close()
         return isIncludeTarget
-    }
-    // directoryInput.changedFiles 中的文件只包含了改变的文件，真坑爹
-    private fun scanDirectoryInput(directoryInput: DirectoryInput) {
-        val dest = outputProvider.getContentLocation(
-            directoryInput.name, directoryInput.contentTypes,
-            directoryInput.scopes, Format.DIRECTORY
-        )
-        val map = directoryInput.changedFiles
-        val dir = directoryInput.file
-        if (isIncremental) {
-            map.forEach { (file, status) ->
-                val destFilePath = file.absolutePath.replace(dir.absolutePath, dest.absolutePath)
-                val destFile = File(destFilePath)
-                when (status) {
-                    Status.NOTCHANGED -> {
-                        scanClass(file)
-                    }
-                    Status.CHANGED, Status.ADDED -> {
-                        try {
-                            FileUtils.touch(destFile)
-                        } catch (e: Exception) {
-                           // Files.createParentDirs(destFile)
-                        }
-                        scanClass(file)
-                        if (file.isDirectory.not()) {
-                            FileUtils.copyFile(file, destFile)
-                        }
-                    }
-                    Status.REMOVED -> {
-                        file.deleteRecursively()
-                    }
-                }
-            }
-        } else {
-            scanClass(directoryInput.file)
-            FileUtils.copyDirectory(directoryInput.file, dest)
-        }
     }
 
     private fun scanClass(file: File) {

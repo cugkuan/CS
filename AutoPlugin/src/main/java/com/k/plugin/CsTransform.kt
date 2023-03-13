@@ -31,7 +31,7 @@ class CsTransform(val project: Project) : Transform() {
     }
 
     override fun isIncremental(): Boolean {
-        return true
+        return false
     }
 
     override fun transform(transformInvocation: TransformInvocation) {
@@ -52,9 +52,9 @@ class CsTransform(val project: Project) : Transform() {
             }, 0)
         }
         transform.startTransform()
-        Logger.error("一共找到${serviceClassInfos.size}个服务,${interceptors.size}个Interceptor;共花费${System.currentTimeMillis() - begin}毫秒")
+        Logger.info("一共找到${serviceClassInfos.size}个服务,${interceptors.size}个Interceptor;共花费${System.currentTimeMillis() - begin}毫秒")
         serviceClassInfos.forEach {
-            Logger.error("${it.className}==>${it.url}")
+            Logger.info("${it.className}==>${it.url}")
         }
         val targetFile = transform.getInjectFile()
         if (targetFile != null) {

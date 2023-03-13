@@ -2,7 +2,7 @@
 
 
 # 概述
-CS 是一个轻量级的组件化框架，支持渐进式的改造。 CS 没有路由的概念，每一次行为（页面跳转，拿取其它组件数据）都是一次 UriRequest。
+CS 是一个轻量级的组件化框架，支持渐进式的改造。Cs基于组件即服务的思想；把组件看成一个个服务； CS 没有路由的概念，每一次行为（页面跳转，拿取其它组件数据）都是一次 UriRequest。
 
 
 
@@ -11,7 +11,7 @@ CS 是一个轻量级的组件化框架，支持渐进式的改造。 CS 没有�
 ```
 buildscript {
     dependencies {
-      classpath 'com.brightk.cs:cs-plguin:0.1.0'
+      classpath 'top.brightk.cs:cs-plguin:0.1.0'
     }
 }
 ```

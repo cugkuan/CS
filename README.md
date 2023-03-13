@@ -11,25 +11,27 @@ CS 是一个轻量级的组件化框架，支持渐进式的改造。Cs基于组
 ```
 buildscript {
     dependencies {
-      classpath 'top.brightk.cs:cs-plguin:0.1.0'
+      classpath 'top.brightk.cs:cs-plguin:1.0.0'
     }
 }
 ```
 
+每一个 module 添加如下依赖
+
 ``` 
-api 'com.brightk.cs:cs:0.3.6'
+implemention  'top.brightk:cs:1.0.1'
 ```
 
-使用插件
+在 Application  module 中使用插件
 
 ```
-apply plugin: 'com.brightk.cs'
+apply plugin: 'top.brightk.cs'
 ```
 
 # 特点
-
-- Service 自动注册；采用了 ASM 技术，在编译阶段，遍历服务，然后生成注册代码，插入对应位置，对启动速度没有丝毫影响。
-- 自动检测 Service 配置的 Uri,在编译阶段杜绝了重复 Uri 的可能性
+- 轻量级，整个库很小；只有基本的组件服务
+- 自动注册；在编译阶段，完成service和 Interceptor的注册，对启动速度没有丝毫影响。
+- 自动检测 Service 配置的 Uri,在编译阶段完成检查
 - 所有的组件都是平行独立的。
 
 # 使用
@@ -62,7 +64,7 @@ class CsOpenAppScoreService: CsService {
 ```
 # 设计思想
 
-CS(Component is Service）；组件即服务，把每个组件看成一个个服务，组件通过 CsService 向外提供服务。由于 Activity的跳转属于 Android层，其启动的方式不停地变化，如ActivityResultLauncher创建时机;启动模式设置等，通过路由写入框架内部不合适；对于Fragment 其复杂的事物更不应该写入框架内部。
+CS(Component is Service）；组件即服务，把每个组件看成一个个服务，组件通过 CsService 向外提供服务。由于 Activity的跳转属于 Android层，其启动的方式不停地变化，如ActivityResultLauncher创建时机;启动模式设置等，通过路由写入框架内部不合适；对于Fragment 其复杂的fragmentTransaction更不应该写入框架内部。
 
-CS 框架只处理请求的转发，真正的处理逻辑 交给 对应的 CsService 去处理。CsService 类似于 Servlet,CS 思想类似于微服务架构设计
+CS 框架只完成基本的组件通信能力，真正的业务处理交给对应的 CsService 去完成。CsService 类似于 Servlet,CS 思想类似于微服务架构设计
 

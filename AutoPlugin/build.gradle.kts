@@ -7,7 +7,7 @@ plugins {
     id("signing")
 }
 group = "top.brightk"
-version = "1.0.0"
+version = "1.0.1"
 
 gradlePlugin {
     plugins {
@@ -20,6 +20,11 @@ gradlePlugin {
 repositories {
     mavenCentral()
     google()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 
@@ -50,6 +55,9 @@ ext {
         }
         set("ossUsername", properties.getProperty("ossrhUsername"))
         set("ossPassword", properties.getProperty("ossrhPassword"))
+        set("qUsername",properties.getProperty("qUserName"))
+        set("qPassword",properties.getProperty("qPassword"))
+        set("qMavenUrl",properties.getProperty("qMavenUrl"))
 
         allprojects{
             extra["signing.keyId"] = properties.getProperty("signing.keyId")
@@ -64,12 +72,18 @@ publishing {
     repositories {
         maven {
             credentials {
-                username = project.ext.get("ossUsername") as String
-                password = project.ext.get("ossPassword") as String
+                if(version.toString().endsWith(".q")){
+                    username = project.ext.get("qUsername") as String
+                    password = project.ext.get("qPassword") as String
+                }else {
+                    username = project.ext.get("ossUsername") as String
+                    password = project.ext.get("ossPassword") as String
+                }
             }
             logger.warn(version.toString())
             val publicUrl  = when{
                 version.toString().endsWith("SNAPSHOT") -> "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+                version.toString().endsWith(".q") -> project.ext.get("qMavenUrl") as String
                 else ->  "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
             }
             url = uri(publicUrl)

@@ -47,7 +47,7 @@ class SearchServiceTransform(
                     val jarFile = JarFile(jarInput.file)
                     if (isIncremental) {
                         when (status) {
-                            Status.NOTCHANGED,Status.ADDED,Status.REMOVED-> {
+                            Status.NOTCHANGED, Status.ADDED, Status.REMOVED -> {
                                 scanJar(jarFile, jarInput.file, destFile)
                             }
                             Status.REMOVED -> {
@@ -89,7 +89,7 @@ class SearchServiceTransform(
 
     private fun scanJar(jarFile: JarFile, inputFile: File, destFile: File): Boolean {
         var isIncludeTarget = false
-        jarFile.entries().asIterator().forEach { entry ->
+        jarFile.entries().iterator().forEach { entry ->
             try {
                 if (filter.filter(entry.name).not()) {
                     jarFile.getInputStream(entry)?.use { stream ->

@@ -11,7 +11,7 @@ CS 是一个轻量级的组件化框架，支持渐进式的改造。Cs基于组
 ```
 buildscript {
     dependencies {
-      classpath 'top.brightk.cs:cs-plguin:1.0.0'
+      classpath 'top.brightk.cs:cs-plguin:1.0.1'
     }
 }
 ```
@@ -26,6 +26,14 @@ implemention  'top.brightk:cs:1.0.1'
 
 ```
 apply plugin: 'top.brightk.cs'
+```
+
+为了加快构建速度，可以在Application gradle 配置 CS plugin 扫描的范围
+
+``` koltin
+csConfig {
+    scanPackages = arrayOf("com/demo")
+}
 ```
 
 # 特点

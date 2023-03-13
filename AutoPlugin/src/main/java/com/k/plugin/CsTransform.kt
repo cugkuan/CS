@@ -7,6 +7,7 @@ import com.k.plugin.csinterceptor.InterceptorClassVisitor
 import com.k.plugin.csserch.ServiceClassVisitor
 import com.k.plugin.transform.SearchServiceTransform
 import org.apache.commons.io.FileUtils
+import org.apache.tools.ant.taskdefs.Java
 import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
@@ -31,7 +32,7 @@ class CsTransform(val project: Project) : Transform() {
     }
 
     override fun isIncremental(): Boolean {
-        return false
+        return true
     }
 
     override fun transform(transformInvocation: TransformInvocation) {
@@ -52,7 +53,7 @@ class CsTransform(val project: Project) : Transform() {
             }, 0)
         }
         transform.startTransform()
-        Logger.info("一共找到${serviceClassInfos.size}个服务,${interceptors.size}个Interceptor;共花费${System.currentTimeMillis() - begin}毫秒")
+        Logger.error("一共找到${serviceClassInfos.size}个服务,${interceptors.size}个Interceptor;共花费${System.currentTimeMillis() - begin}毫秒")
         serviceClassInfos.forEach {
             Logger.info("${it.className}==>${it.url}")
         }
@@ -65,37 +66,40 @@ class CsTransform(val project: Project) : Transform() {
                     FileUtils.forceDelete(tempJar)
                 }
                 val jarOutputStream = JarOutputStream(FileOutputStream(tempJar))
-                jarFile.entries().asIterator().forEach { entry ->
-                    val zipEntry = ZipEntry(entry.name)
-                    jarOutputStream.putNextEntry(zipEntry)
-                    if (entry.name == "com/brightk/cs/CS.class") {
-                        jarFile.getInputStream(entry)?.use { stream ->
-                            stream.readAllBytes()?.takeIf {
-                                it.isNotEmpty()
-                            }?.let {
-                                val classReader = ClassReader(it)
-                                val classWriter =
-                                    ClassWriter(
-                                        classReader,
-                                        ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS
-                                    )
-                                val targetClassVisitor =
-                                    CSInjectClassVisitor(classWriter, serviceClassInfos,interceptors)
-                                classReader.accept(targetClassVisitor, ClassReader.EXPAND_FRAMES)
-                                jarOutputStream.write(classWriter.toByteArray())
+                jarOutputStream.use {  jarOutputStream ->
+                    jarFile.entries().iterator().forEach { entry ->
+                        val zipEntry = ZipEntry(entry.name)
+                        jarOutputStream.putNextEntry(zipEntry)
+                        if (entry.name == "com/brightk/cs/CS.class") {
+                            jarFile.getInputStream(entry)?.use { stream ->
+                                stream.readAllBytes()?.takeIf {
+                                    it.isNotEmpty()
+                                }?.let {
+                                    val classReader = ClassReader(it)
+                                    val classWriter =
+                                        ClassWriter(
+                                            classReader,
+                                            ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS
+                                        )
+                                    val targetClassVisitor =
+                                        CSInjectClassVisitor(classWriter, serviceClassInfos,interceptors)
+                                    classReader.accept(targetClassVisitor, ClassReader.EXPAND_FRAMES)
+                                    jarOutputStream.write(classWriter.toByteArray())
+                                }
+                            } ?: run {
+                                jarOutputStream.write(jarFile.getInputStream(entry).readAllBytes())
                             }
-                        } ?: run {
-                            jarOutputStream.write(jarFile.getInputStream(entry).readBytes())
+                        } else {
+                            jarOutputStream.write(jarFile.getInputStream(entry).readAllBytes())
                         }
-                    } else {
-                        jarOutputStream.write(jarFile.getInputStream(entry).readBytes())
                     }
-                    jarOutputStream.closeEntry()
                 }
-                jarOutputStream.close()
-                tempJar.renameTo(targetFile.second)
+                // 直接 rename windows 有问题，mac 上没问题
+                FileUtils.copyFile(tempJar,targetFile.second)
+                FileUtils.forceDelete(tempJar)
             } catch (e: Exception) {
                 e.printStackTrace()
+                Logger.error(e.message)
             }
         } else {
             Logger.error("未找到注入目标")

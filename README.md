@@ -11,7 +11,7 @@ CS 是一个轻量级的组件化框架，支持渐进式的改造。Cs基于组
 ```
 buildscript {
     dependencies {
-      classpath 'top.brightk.cs:cs-plguin:1.0.1'
+      classpath 'top.brightk.cs:cs-plguin:1.0.7'
     }
 }
 ```
@@ -34,6 +34,12 @@ apply plugin: 'top.brightk.cs'
 csConfig {
     scanPackages = arrayOf("com/demo")
 }
+```
+
+在合适的地方进行Cs的初始化
+
+```java
+ CS.init();
 ```
 
 # 特点

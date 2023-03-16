@@ -11,12 +11,12 @@ CS 是一个轻量级的组件化框架，支持渐进式的改造。Cs基于组
 ```
 buildscript {
     dependencies {
-      classpath 'top.brightk.cs:cs-plguin:1.0.7'
+      classpath 'top.brightk:cs-plguin:1.0.7'
     }
 }
 ```
 
-每一个 module 添加如下依赖
+每一个 module 添加如下依赖，请注意，是每一个module ，如果没添加将不会被插件扫描
 
 ``` 
 implemention  'top.brightk:cs:1.0.1'

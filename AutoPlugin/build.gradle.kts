@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.konan.properties.Properties
-
 plugins {
     id("java-gradle-plugin") // Java Gradle Plugin
     id("maven-publish")
@@ -8,7 +7,6 @@ plugins {
 }
 group = "top.brightk"
 version = "1.0.7"
-
 gradlePlugin {
     plugins {
         register("cs-plugin") {

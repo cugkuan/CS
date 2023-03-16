@@ -1,10 +1,9 @@
 package com.k.plugin.transform
 
 import com.android.build.api.transform.*
-import com.k.plugin.CsUtils
 import com.k.plugin.Logger
+import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
-import org.gradle.util.internal.JarUtil
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
@@ -29,34 +28,43 @@ class SearchServiceTransform(
     private var targetFile: AtomicReference<Pair<File, File>> =
         AtomicReference<Pair<File, File>>(null)
 
+
     fun getInjectFile(): Pair<File, File>? = targetFile.get()
     fun startTransform() {
-        if (isIncremental.not()) {
+        Logger.error("本次编译为：${if (isIncremental) "增量" else "非增量"}编译")
+        if (!isIncremental){
             outputProvider.deleteAll()
         }
         inputs.forEach { input ->
             input.jarInputs.forEach { jarInput ->
                 val task = Callable {
+                    var destName = jarInput.file.name.let {
+                        if (it.endsWith(".jar")) {
+                            it.substring(0, it.length - 4)
+                        } else {
+                            it
+                        }
+                    }
+                    val hexName = DigestUtils.md5Hex(jarInput.file.absolutePath)
                     val status = jarInput.status
-                    var destName = jarInput.file.name
-                    val hexName = CsUtils.getMD5(jarInput.file.absolutePath)
                     val destFile: File = outputProvider.getContentLocation(
-                        "$destName-$hexName",
+                        "${hexName}_$destName",
                         jarInput.contentTypes, jarInput.scopes, Format.JAR
                     )
                     val jarFile = JarFile(jarInput.file)
                     if (isIncremental) {
                         when (status) {
-                            Status.NOTCHANGED, Status.ADDED, Status.REMOVED -> {
+                            Status.NOTCHANGED -> {
                                 scanJar(jarFile, jarInput.file, destFile)
+                            }
+                            Status.ADDED, Status.CHANGED -> {
+                                scanJar(jarFile, jarInput.file, destFile)
+                                FileUtils.copyFile(jarInput.file, destFile)
                             }
                             Status.REMOVED -> {
                                 if (destFile.exists()) {
                                     FileUtils.forceDelete(destFile)
                                 }
-                            }
-                            else -> {
-                                scanJar(jarFile, jarInput.file, destFile)
                             }
                         }
                     } else {
@@ -81,6 +89,7 @@ class SearchServiceTransform(
             }
         }
         executor.invokeAll(tasks)
+
     }
 
     private fun process(classBytes: ByteArray) {
@@ -105,6 +114,7 @@ class SearchServiceTransform(
                     isIncludeTarget = true
                 }
             } catch (e: java.lang.Exception) {
+                e.printStackTrace()
             }
         }
         jarFile.close()

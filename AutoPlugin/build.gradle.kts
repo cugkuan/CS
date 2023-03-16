@@ -7,7 +7,7 @@ plugins {
     id("signing")
 }
 group = "top.brightk"
-version = "1.0.1"
+version = "1.0.6.16.q"
 
 gradlePlugin {
     plugins {
@@ -46,6 +46,7 @@ dependencies {
     implementation("org.ow2.asm:asm-commons:9.1")
     implementation("com.android.tools:sdk-common:30.0.3")
     implementation("commons-io:commons-io:2.4")
+    implementation("commons-codec:commons-codec:1.9")
 }
 ext {
     val file = rootProject.file("../local.properties")

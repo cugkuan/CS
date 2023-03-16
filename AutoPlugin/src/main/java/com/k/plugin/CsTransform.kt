@@ -9,6 +9,7 @@ import com.k.plugin.transform.SearchServiceTransform
 import org.apache.commons.io.FileUtils
 import org.apache.tools.ant.taskdefs.Java
 import org.gradle.api.Project
+import org.gradle.internal.impldep.org.apache.commons.codec.digest.DigestUtils
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import java.io.File
@@ -60,10 +61,12 @@ class CsTransform(val project: Project) : Transform() {
         val targetFile = transform.getInjectFile()
         if (targetFile != null) {
             try {
-                val jarFile = JarFile(targetFile.first)
-                val tempJar = File(targetFile.second.absolutePath.replace(".jar", "temp.jar"))
-                if (tempJar.exists()) {
-                    FileUtils.forceDelete(tempJar)
+                val inputFile = targetFile.first
+                val destFile = targetFile.second
+                val jarFile = JarFile(inputFile)
+                val tempJar = File(inputFile.parent,inputFile.name.replace(".jar",".temp"))
+                if (!tempJar.exists()) {
+                    tempJar.createNewFile()
                 }
                 val jarOutputStream = JarOutputStream(FileOutputStream(tempJar))
                 jarOutputStream.use {  jarOutputStream ->
@@ -95,11 +98,10 @@ class CsTransform(val project: Project) : Transform() {
                     }
                 }
                 // 直接 rename windows 有问题，mac 上没问题
-                FileUtils.copyFile(tempJar,targetFile.second)
+                FileUtils.copyFile(tempJar,destFile)
                 FileUtils.forceDelete(tempJar)
             } catch (e: Exception) {
                 e.printStackTrace()
-                Logger.error(e.message)
             }
         } else {
             Logger.error("未找到注入目标")

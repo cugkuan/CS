@@ -32,7 +32,7 @@ class SearchServiceTransform(
     fun getInjectFile(): Pair<File, File>? = targetFile.get()
     fun startTransform() {
         Logger.error("本次编译为：${if (isIncremental) "增量" else "非增量"}编译")
-        if (!isIncremental){
+        if (!isIncremental) {
             outputProvider.deleteAll()
         }
         inputs.forEach { input ->
@@ -57,13 +57,20 @@ class SearchServiceTransform(
                             Status.NOTCHANGED -> {
                                 scanJar(jarFile, jarInput.file, destFile)
                             }
-                            Status.ADDED, Status.CHANGED -> {
+                            Status.ADDED -> {
+                                // 增量编译中，库升级导致编译错误，折腾了很久也没解决方案
+                                scanJar(jarFile, jarInput.file, destFile)
+                                FileUtils.copyFile(jarInput.file, destFile)
+                            }
+                            Status.CHANGED -> {
                                 scanJar(jarFile, jarInput.file, destFile)
                                 FileUtils.copyFile(jarInput.file, destFile)
                             }
                             Status.REMOVED -> {
-                                if (destFile.exists()) {
+                                try {
                                     FileUtils.forceDelete(destFile)
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
                                 }
                             }
                         }

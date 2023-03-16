@@ -33,7 +33,8 @@ class CsTransform(val project: Project) : Transform() {
     }
 
     override fun isIncremental(): Boolean {
-        return true
+        // 增量更新，解决不了升级更新库后，必须进行清理缓存的操作
+        return false
     }
 
     override fun transform(transformInvocation: TransformInvocation) {
@@ -64,12 +65,12 @@ class CsTransform(val project: Project) : Transform() {
                 val inputFile = targetFile.first
                 val destFile = targetFile.second
                 val jarFile = JarFile(inputFile)
-                val tempJar = File(inputFile.parent,inputFile.name.replace(".jar",".temp"))
+                val tempJar = File(inputFile.parent, inputFile.name.replace(".jar", ".temp"))
                 if (!tempJar.exists()) {
                     tempJar.createNewFile()
                 }
                 val jarOutputStream = JarOutputStream(FileOutputStream(tempJar))
-                jarOutputStream.use {  jarOutputStream ->
+                jarOutputStream.use { jarOutputStream ->
                     jarFile.entries().iterator().forEach { entry ->
                         val zipEntry = ZipEntry(entry.name)
                         jarOutputStream.putNextEntry(zipEntry)
@@ -85,8 +86,15 @@ class CsTransform(val project: Project) : Transform() {
                                             ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS
                                         )
                                     val targetClassVisitor =
-                                        CSInjectClassVisitor(classWriter, serviceClassInfos,interceptors)
-                                    classReader.accept(targetClassVisitor, ClassReader.EXPAND_FRAMES)
+                                        CSInjectClassVisitor(
+                                            classWriter,
+                                            serviceClassInfos,
+                                            interceptors
+                                        )
+                                    classReader.accept(
+                                        targetClassVisitor,
+                                        ClassReader.EXPAND_FRAMES
+                                    )
                                     jarOutputStream.write(classWriter.toByteArray())
                                 }
                             } ?: run {
@@ -98,7 +106,7 @@ class CsTransform(val project: Project) : Transform() {
                     }
                 }
                 // 直接 rename windows 有问题，mac 上没问题
-                FileUtils.copyFile(tempJar,destFile)
+                FileUtils.copyFile(tempJar, destFile)
                 FileUtils.forceDelete(tempJar)
             } catch (e: Exception) {
                 e.printStackTrace()

@@ -7,7 +7,7 @@ plugins {
     id("signing")
 }
 group = "top.brightk"
-version = "1.0.6.16.q"
+version = "1.0.7"
 
 gradlePlugin {
     plugins {

@@ -2,7 +2,7 @@ package com.k.plugin.transform
 
 import com.k.plugin.CsPluginUtils
 
-class DefaultClassNameFilter : ClassNameFilter {
+object DefaultClassNameFilter  {
 
     private val whiteList = mutableListOf<String>().apply {
         add("kotlin")
@@ -18,7 +18,7 @@ class DefaultClassNameFilter : ClassNameFilter {
         add("com/brightk")
     }
 
-    override fun filter(className: String): Boolean {
+    fun filter(className: String): Boolean {
         return if (className.endsWith(".class").not()) {
             true
         } else {
@@ -36,5 +36,9 @@ class DefaultClassNameFilter : ClassNameFilter {
         }
     }
 
-    override fun isTargetClass(className: String) = (className == "com/brightk/cs/CS.class")
+     fun isTargetClass(className: String) = (className == "com/brightk/cs/CS.class")
+
+    fun isSkipTransformJarFile(fullName: String): Boolean {
+        return fullName.startsWith("META-INF")
+    }
 }

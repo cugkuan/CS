@@ -1,24 +1,9 @@
 package com.k.plugin
 
-import com.android.build.api.transform.*
+import com.android.build.api.transform.QualifiedContent
+import com.android.build.api.transform.Transform
 import com.android.build.gradle.internal.pipeline.TransformManager
-import com.k.plugin.csinject.CSInjectClassVisitor
-import com.k.plugin.csinterceptor.InterceptorClassVisitor
-import com.k.plugin.csserch.ServiceClassVisitor
-import com.k.plugin.transform.SearchServiceTransform
-import org.apache.commons.io.FileUtils
-import org.apache.tools.ant.taskdefs.Java
 import org.gradle.api.Project
-import org.gradle.internal.impldep.org.apache.commons.codec.digest.DigestUtils
-import org.objectweb.asm.ClassReader
-import org.objectweb.asm.ClassWriter
-import java.io.File
-import java.io.FileOutputStream
-import java.util.*
-import java.util.jar.JarFile
-import java.util.jar.JarOutputStream
-import java.util.zip.ZipEntry
-import kotlin.collections.ArrayList
 
 class CsTransform(val project: Project) : Transform() {
 
@@ -37,83 +22,83 @@ class CsTransform(val project: Project) : Transform() {
         return false
     }
 
-    override fun transform(transformInvocation: TransformInvocation) {
+//    override fun transform(transformInvocation: TransformInvocation) {
 
-        val begin = System.currentTimeMillis()
-        Logger.error("CS自动注册插件开始工作.........")
-        val serviceClassInfos: MutableList<CsServiceClassInfo> =
-            Collections.synchronizedList(ArrayList())
-        val interceptors: MutableList<InterceptorClassInfo> =
-            Collections.synchronizedList(ArrayList())
-        val transform = SearchServiceTransform(transformInvocation) { classBytes ->
-            val classReader = ClassReader(classBytes)
-            classReader.accept(ServiceClassVisitor { info ->
-                serviceClassInfos.add(info)
-            }, 0)
-            classReader.accept(InterceptorClassVisitor { info ->
-                interceptors.add(info)
-            }, 0)
-        }
-        transform.startTransform()
-        Logger.error("一共找到${serviceClassInfos.size}个服务,${interceptors.size}个Interceptor;共花费${System.currentTimeMillis() - begin}毫秒")
-        serviceClassInfos.forEach {
-            Logger.info("${it.className}==>${it.url}")
-        }
-        val targetFile = transform.getInjectFile()
-        if (targetFile != null) {
-            try {
-                val inputFile = targetFile.first
-                val destFile = targetFile.second
-                val jarFile = JarFile(inputFile)
-                val tempJar = File(inputFile.parent, inputFile.name.replace(".jar", ".temp"))
-                if (!tempJar.exists()) {
-                    tempJar.createNewFile()
-                }
-                val jarOutputStream = JarOutputStream(FileOutputStream(tempJar))
-                jarOutputStream.use { jarOutputStream ->
-                    jarFile.entries().iterator().forEach { entry ->
-                        val zipEntry = ZipEntry(entry.name)
-                        jarOutputStream.putNextEntry(zipEntry)
-                        if (entry.name == "com/brightk/cs/CS.class") {
-                            jarFile.getInputStream(entry)?.use { stream ->
-                                stream.readAllBytes()?.takeIf {
-                                    it.isNotEmpty()
-                                }?.let {
-                                    val classReader = ClassReader(it)
-                                    val classWriter =
-                                        ClassWriter(
-                                            classReader,
-                                            ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS
-                                        )
-                                    val targetClassVisitor =
-                                        CSInjectClassVisitor(
-                                            classWriter,
-                                            serviceClassInfos,
-                                            interceptors
-                                        )
-                                    classReader.accept(
-                                        targetClassVisitor,
-                                        ClassReader.EXPAND_FRAMES
-                                    )
-                                    jarOutputStream.write(classWriter.toByteArray())
-                                }
-                            } ?: run {
-                                jarOutputStream.write(jarFile.getInputStream(entry).readAllBytes())
-                            }
-                        } else {
-                            jarOutputStream.write(jarFile.getInputStream(entry).readAllBytes())
-                        }
-                    }
-                }
-                // 直接 rename windows 有问题，mac 上没问题
-                FileUtils.copyFile(tempJar, destFile)
-                FileUtils.forceDelete(tempJar)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        } else {
-            Logger.error("未找到注入目标")
-        }
-        Logger.error("CS工作结束!一共花费${System.currentTimeMillis() - begin}毫秒")
-    }
+//        val begin = System.currentTimeMillis()
+//        Logger.error("CS自动注册插件开始工作.........")
+//        val serviceClassInfos: MutableList<CsServiceClassInfo> =
+//            Collections.synchronizedList(ArrayList())
+//        val interceptors: MutableList<InterceptorClassInfo> =
+//            Collections.synchronizedList(ArrayList())
+//        val transform = SearchServiceTransform(transformInvocation) { classBytes ->
+//            val classReader = ClassReader(classBytes)
+//            classReader.accept(ServiceClassVisitor { info ->
+//                serviceClassInfos.add(info)
+//            }, 0)
+//            classReader.accept(InterceptorClassVisitor { info ->
+//                interceptors.add(info)
+//            }, 0)
+//        }
+//        transform.startTransform()
+//        Logger.error("一共找到${serviceClassInfos.size}个服务,${interceptors.size}个Interceptor;共花费${System.currentTimeMillis() - begin}毫秒")
+//        serviceClassInfos.forEach {
+//            Logger.info("${it.className}==>${it.url}")
+//        }
+//        val targetFile = transform.getInjectFile()
+//        if (targetFile != null) {
+//            try {
+//                val inputFile = targetFile.first
+//                val destFile = targetFile.second
+//                val jarFile = JarFile(inputFile)
+//                val tempJar = File(inputFile.parent, inputFile.name.replace(".jar", ".temp"))
+//                if (!tempJar.exists()) {
+//                    tempJar.createNewFile()
+//                }
+//                val jarOutputStream = JarOutputStream(FileOutputStream(tempJar))
+//                jarOutputStream.use { jarOutputStream ->
+//                    jarFile.entries().iterator().forEach { entry ->
+//                        val zipEntry = ZipEntry(entry.name)
+//                        jarOutputStream.putNextEntry(zipEntry)
+//                        if (entry.name == "com/brightk/cs/CS.class") {
+//                            jarFile.getInputStream(entry)?.use { stream ->
+//                                stream.readAllBytes()?.takeIf {
+//                                    it.isNotEmpty()
+//                                }?.let {
+//                                    val classReader = ClassReader(it)
+//                                    val classWriter =
+//                                        ClassWriter(
+//                                            classReader,
+//                                            ClassWriter.COMPUTE_FRAMES or ClassWriter.COMPUTE_MAXS
+//                                        )
+//                                    val targetClassVisitor =
+//                                        CSInjectClassVisitor(
+//                                            classWriter,
+//                                            serviceClassInfos,
+//                                            interceptors
+//                                        )
+//                                    classReader.accept(
+//                                        targetClassVisitor,
+//                                        ClassReader.EXPAND_FRAMES
+//                                    )
+//                                    jarOutputStream.write(classWriter.toByteArray())
+//                                }
+//                            } ?: run {
+//                                jarOutputStream.write(jarFile.getInputStream(entry).readAllBytes())
+//                            }
+//                        } else {
+//                            jarOutputStream.write(jarFile.getInputStream(entry).readAllBytes())
+//                        }
+//                    }
+//                }
+//                // 直接 rename windows 有问题，mac 上没问题
+//                FileUtils.copyFile(tempJar, destFile)
+//                FileUtils.forceDelete(tempJar)
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//            }
+//        } else {
+//            Logger.error("未找到注入目标")
+//        }
+//        Logger.error("CS工作结束!一共花费${System.currentTimeMillis() - begin}毫秒")
+//    }
 }

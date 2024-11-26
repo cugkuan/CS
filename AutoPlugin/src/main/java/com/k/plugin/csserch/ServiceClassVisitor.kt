@@ -2,6 +2,7 @@ package com.k.plugin.csserch
 
 import com.k.plugin.CsPluginUtils
 import com.k.plugin.CsServiceClassInfo
+import com.k.plugin.Logger
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
@@ -21,9 +22,9 @@ internal class ServiceClassVisitor(private val searchResultBack: (info:CsService
         superName: String?,
         interfaces: Array<String>
     ) {
-        super.visit(version, access, name, signature, superName, interfaces)
         isTarget = interfaces.contains(CsPluginUtils.FIND_SERVICE_CLASS_TARGET)
         className = name
+        super.visit(version, access, name, signature, superName, interfaces)
     }
 
     override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {

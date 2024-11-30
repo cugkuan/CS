@@ -7,7 +7,6 @@ public class InterceptorClassInfo {
 
     public InterceptorClassInfo(String className, int priority, String name) {
         this.className = className.replace('/', '.');
-        ;
         this.priority = priority;
         this.name = name;
     }

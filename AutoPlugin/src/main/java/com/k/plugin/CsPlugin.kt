@@ -27,12 +27,7 @@ abstract class CsPlugin :Plugin<Project> {
                     { it.allDirectories },
                     { it.output }
                 )
-
         }
-//        android.registerTransform(CsTransform(project))
-//        project.afterEvaluate {
-//            CsPluginUtils.scanPackage = project.extensions.getByType(CsConfig::class.java).scanPackages
-//        }
     }
 }
 

@@ -3,6 +3,9 @@ package com.k.plugin;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 工具类
+ */
 public class CsPluginUtils {
     /**
      * 服务地址的配置注解

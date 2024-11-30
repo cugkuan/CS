@@ -69,28 +69,28 @@ abstract class CsTask : DefaultTask() {
 
     private fun inject() {
         val outputFile = output.get().asFile
+        println("LaunchInjectTask outputFile:${outputFile.absolutePath}")
+        val allJarList = allJars.get()
+        var tmpClassesFile: File? = null
+        if (allJarList.size == 1 && allJarList[0].asFile.absolutePath == outputFile.absolutePath) {
+            val tmpFile = File(outputFile.parentFile.absolutePath, "tmpFile.jar")
+            if (tmpFile.exists()) {
+                tmpFile.delete()
+            }
+            tmpClassesFile = tmpFile
+            allJarList[0].asFile.renameTo(tmpFile)
+        }
+
         JarOutputStream(
             BufferedOutputStream(FileOutputStream(outputFile))
         ).use { outputStream ->
-            allJars.get().forEach { regularFile ->
-                val file = regularFile.asFile
-                JarFile(file).use { jarFile ->
-                    jarFile.entries().iterator().forEach jarIterator@{ jarEntry ->
-                        val jarEntryName = jarEntry.name
-                        if (jarEntry.isDirectory || DefaultClassNameFilter.isSkipTransformJarFile(
-                                jarEntryName
-                            )
-                        ) {
-                            return@jarIterator
-                        }
-                        handleClassFile(
-                            outputStream = outputStream,
-                            fileInputStream = jarFile.getInputStream(jarEntry),
-                            filePath = jarEntryName
-                        )
-                    }
+            tmpClassesFile?.let { tmpFile ->
+                jarFileHandle(tmpFile, outputStream)
+            } ?: run {
+                allJars.get().forEach { regularFile ->
+                    val file = regularFile.asFile
+                    jarFileHandle(file, outputStream)
                 }
-
             }
             allDirectories.get().forEach { directory ->
                 val directoryFile = directory.asFile
@@ -105,6 +105,25 @@ abstract class CsTask : DefaultTask() {
                     )
                 }
 
+            }
+        }
+    }
+
+    private fun jarFileHandle(file: File, outputStream: JarOutputStream) {
+        JarFile(file).use { jarFile ->
+            jarFile.entries().iterator().forEach jarIterator@{ jarEntry ->
+                val jarEntryName = jarEntry.name
+                if (jarEntry.isDirectory || DefaultClassNameFilter.isSkipTransformJarFile(
+                        jarEntryName
+                    )
+                ) {
+                    return@jarIterator
+                }
+                handleClassFile(
+                    outputStream = outputStream,
+                    fileInputStream = jarFile.getInputStream(jarEntry),
+                    filePath = jarEntryName
+                )
             }
         }
     }

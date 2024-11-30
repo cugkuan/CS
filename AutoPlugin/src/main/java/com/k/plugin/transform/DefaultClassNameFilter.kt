@@ -2,7 +2,7 @@ package com.k.plugin.transform
 
 import com.k.plugin.CsPluginUtils
 
-object DefaultClassNameFilter  {
+object DefaultClassNameFilter {
 
     private val whiteList = mutableListOf<String>().apply {
         add("kotlin")
@@ -17,6 +17,8 @@ object DefaultClassNameFilter  {
         add("META-INF")
         add("com/brightk")
     }
+
+    private val JAR_SIGNATURE_EXTENSIONS = arrayOf("SF","RSA","DSA","EC")
 
     fun filter(className: String): Boolean {
         return if (className.endsWith(".class").not()) {
@@ -36,9 +38,9 @@ object DefaultClassNameFilter  {
         }
     }
 
-     fun isTargetClass(className: String) = (className == "com/brightk/cs/CS.class")
+    fun isTargetClass(className: String) = (className == "com/brightk/cs/CS.class")
 
     fun isSkipTransformJarFile(fullName: String): Boolean {
-        return fullName.startsWith("META-INF")
+        return fullName.startsWith("META-INF") || fullName.substringAfter('.') in JAR_SIGNATURE_EXTENSIONS
     }
 }

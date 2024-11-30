@@ -23,7 +23,6 @@ class SearchServiceTransform(
     fun startTransform() {
         tasks.clear()
         allJars.get().forEach { regularFile ->
-            println("JarFile:${regularFile.asFile.absolutePath}")
             val task = Callable {
                 JarFile(regularFile.asFile).use { jarFile ->
                     jarFile.entries().asIterator().forEach iterator@{ jarEntry ->

@@ -6,12 +6,12 @@ CS 是一个轻量级的组件化框架，支持渐进式的改造。Cs基于组
 
 
 
-添加插件依赖和库依赖
+添加插件依赖和库依赖(插件已经适配了gradle8.0)
 
 ```
 buildscript {
     dependencies {
-      classpath 'top.brightk:cs-plguin:1.0.7'
+      classpath 'top.brightk:cs-plguin:2.0.0.12'
     }
 }
 ```

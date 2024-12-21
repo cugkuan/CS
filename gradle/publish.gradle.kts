@@ -1,20 +1,27 @@
 import java.util.Properties
 
-val file = rootProject.file("../local.properties")
+/**
+ * includeBuild 和 include 路径不一样
+ */
 val properties = Properties().apply {
-    load(file.inputStream())
+    try {
+        load(rootProject.file("./local.properties").inputStream())
+    } catch (e: Exception) {
+        load(rootProject.file("../local.properties").inputStream())
+    }
 }
-val testUrl :String by  properties
-val testName :String  by  properties
-val testPassword :String by  properties
-val ossrhUsername :String by  properties
-val ossrhPassword :String  by  properties
+val testUrl: String by properties
+val testName: String by properties
+val testPassword: String by properties
+val ossrhUsername: String by properties
+val ossrhPassword: String by properties
 
 val uploadRepository: Action<RepositoryHandler> = Action<RepositoryHandler> {
     maven {
         val publicUrl = when {
             version.toString()
                 .endsWith("SNAPSHOT") -> "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+
             version.toString().endsWith(".test") -> testUrl
             else -> "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
         }

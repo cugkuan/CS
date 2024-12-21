@@ -31,7 +31,9 @@ kotlin-bom = "1.8.0"
 appcompat = "1.6.1"
 material = "1.11.0"
 
+cs = "2.0.0.test"
 cs-plugin = "2.0.0.3"
+core-ktx = "1.10.1"
 
 [libraries]
 # gradle
@@ -45,7 +47,7 @@ gradle-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.
 gradle-android-core = { module = "com.android.tools.build:gradle", version.ref = "gradle-android" }
 gradle-android-api = { module = "com.android.tools.build:gradle-api", version.ref = "gradle-android" }
 gradle-launchPlugin = { module = "com.qizhidao:launch-process", version.ref = "launch-plugin" }
-gradle-csPlugin = {module = "top.brightk:cs-plugin",version.ref = "cs-plugin"}
+gradle-csPlugin = { module = "top.brightk:cs-plugin", version.ref = "cs-plugin" }
 # android
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle-runtime-ktx" }
@@ -58,7 +60,7 @@ androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 # test
-gradle= { module = "com.android.tools.build:gradle", version.ref = "gradle" }
+gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle" }
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-ext-junit" }
 androidx-test-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-test-espresso-core" }
@@ -77,6 +79,8 @@ launch-process = { module = "com.qizhidao:launch-process", version.ref = "launch
 kotlin-bom = { group = "org.jetbrains.kotlin", name = "kotlin-bom", version.ref = "kotlin-bom" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
+cs = { module = "top.brightk:cs", version.ref = "cs" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle-android" }
@@ -85,4 +89,4 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "gradle-kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "gradle-kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "gradle-ksp" }
 launch-plugin = { id = "com.qizhidao.launch", version.ref = "launch-plugin" }
-cs-plugin = {id = "top.brightk.cs",version.ref = "cs-plugin"}
+cs-plugin = { id = "top.brightk.cs", version.ref = "cs-plugin" }

@@ -37,11 +37,12 @@ android {
     }
 }
 group = "top.brightk"
-version = "2.0.0.test"
+version = "1.1.0"
 
 dependencies {
     implementation("androidx.annotation:annotation:1.4.0")
     implementation(libs.core.ktx)
+    api(libs.cs.annotation)
 }
 
 apply(from = "${rootProject.projectDir}/gradle/publish.gradle.kts")

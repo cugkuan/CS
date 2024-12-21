@@ -9,7 +9,7 @@ constraintlayout = "2.1.4"
 gradle = "7.4.2"
 gradle-kotlin = "2.0.0"
 gradle-android = "7.4.2"
-gradle-ksp = "1.7.10-1.0.6"
+gradle-ksp = "2.0.21-1.0.25"
 # android
 androidx-core-ktx = "1.8.0"
 androidx-lifecycle-runtime-ktx = "2.3.1"
@@ -31,7 +31,8 @@ kotlin-bom = "1.8.0"
 appcompat = "1.6.1"
 material = "1.11.0"
 
-cs = "2.0.0.test"
+cs = "1.2.0"
+cs-annotation = "1.2.0"
 cs-plugin = "2.0.0.3"
 core-ktx = "1.10.1"
 
@@ -81,6 +82,8 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 cs = { module = "top.brightk:cs", version.ref = "cs" }
+cs-annotation = {module = "top.brightk:cs-annotation",version.ref = "cs-annotation"}
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "gradle-android" }

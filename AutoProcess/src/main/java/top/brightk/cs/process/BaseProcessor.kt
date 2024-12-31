@@ -28,7 +28,7 @@ abstract class BaseProcessor(protected val env: SymbolProcessorEnvironment) : Sy
         appendText(text)
     }
 
-    protected fun log(text: String) {
+    fun log(text: String) {
         logger.warn("${javaClass.simpleName} -- $text")
     }
 }

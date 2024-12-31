@@ -19,6 +19,7 @@ java {
 dependencies{
     implementation(libs.ksp.symbol.processing.api)
     implementation(libs.cs.annotation)
+    implementation(libs.gson)
 }
 apply(from = "${rootDir}/gradle/publish.gradle.kts")
 val uploadRepository: Action<RepositoryHandler> by extra

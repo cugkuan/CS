@@ -8,7 +8,7 @@ import java.io.OutputStream
 
 abstract class BaseProcessor(protected val env: SymbolProcessorEnvironment) : SymbolProcessor {
     protected val codeGenerator: CodeGenerator = env.codeGenerator
-    protected val logger: KSPLogger = env.logger
+    private val logger: KSPLogger = env.logger
     protected val options: Map<String, String> = env.options
 
     protected fun OutputStream.appendText(str: String) {
@@ -29,6 +29,6 @@ abstract class BaseProcessor(protected val env: SymbolProcessorEnvironment) : Sy
     }
 
     fun log(text: String) {
-        logger.warn("${javaClass.simpleName} -- $text")
+        logger.warn("CsKsp --> $text")
     }
 }

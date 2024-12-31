@@ -1,6 +1,8 @@
 package top.brightk.cs.process
 
 import com.brightk.cs.core.annotation.CsUri
+import com.brightk.cs.core.annotation.Interceptor
+import com.brightk.cs.core.annotation.KspBridgeInterceptor
 import com.brightk.cs.core.annotation.KspBridgeService
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getAnnotationsByType
@@ -8,6 +10,7 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.qizhidao.launchksp.processor.BaseProcessor
+import top.brightk.cs.process.annotation.CsInterceptorVisitor
 import top.brightk.cs.process.annotation.CsServiceVisitor
 import top.brightk.cs.process.create.CreateCsTransfer
 import top.brightk.cs.process.create.CreateFinalTransfer
@@ -21,52 +24,51 @@ const val CS_TRANSFER_IMPORT_INTERCEPTOR = "com.brightk.cs.core.annotation.KspBr
 /**
  * 针对非增量更新设计
  */
-class KspProcessor(val environment: SymbolProcessorEnvironment) :
+class KspProcessor(environment: SymbolProcessorEnvironment) :
     BaseProcessor(environment) {
-
     private var isCsScan: Boolean = true
     private var csFinish = false
-    val csServices = ArrayList<CsServiceNode>()
-
     @OptIn(KspExperimental::class)
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        log("CsKps:kspProcess开始运行")
         log(resolver.getModuleName().asString())
         if (isCsScan) {
-            csServices.clear()
-            val csServiceVisitor = CsServiceVisitor(this)
+            val csServices = ArrayList<CsServiceNode>()
+            val csInterceptors = ArrayList<CsInterceptorNode>()
+            val csServiceVisitor = CsServiceVisitor(this, csServices)
             val ksAnnotated = resolver.getSymbolsWithAnnotation(CsUri::class.java.name)
             ksAnnotated.forEach {
                 it.accept(csServiceVisitor, Unit)
             }
-            // 全部收集完成，开始生成中间文件
-            log("CsService收集完成")
-            if (csServices.isNotEmpty()) {
-                CreateCsTransfer(codeGenerator, csServices)
-                    .create()
+            val csInterceptorVisitor = CsInterceptorVisitor(this, csInterceptors)
+            val interceptorAnnotation =
+                resolver.getSymbolsWithAnnotation(Interceptor::class.java.name)
+            interceptorAnnotation.forEach {
+                it.accept(csInterceptorVisitor, Unit)
             }
+            CreateCsTransfer(codeGenerator, csServices, csInterceptors)
+                .create()
             isCsScan = false
-            return ksAnnotated.toList()
+            return ArrayList<KSAnnotated>().apply {
+                addAll(ksAnnotated.toList())
+                addAll(interceptorAnnotation.toList())
+            }
         }
-        // 生产中间产物
-        val application = environment.options["application"]
+        val application = options["application"]
         if (application == "true" && !csFinish) {
-            log("主项目运行......")
             val csFinalServices = ArrayList<CsServiceNode>()
+            val csFinalInterceptor = ArrayList<CsInterceptorNode>()
             resolver.getDeclarationsFromPackage(CS_TRANSFER_PACKET).forEach { declaration ->
-                log("汇总：${declaration.simpleName.asString()}")
-                declaration.annotations.forEach {
-                    log("===>"+it.shortName.asString())
-                    log("===>"+it.annotationType.toString())
-                }
                 declaration.getAnnotationsByType(KspBridgeService::class).forEach { node ->
-                    log(node.toString())
                     val json = node.json
-                    log(json)
                     csFinalServices.addAll(json.getServiceNodes())
                 }
+                declaration.getAnnotationsByType(KspBridgeInterceptor::class).forEach { node ->
+                    val json = node.json
+                    csFinalInterceptor.addAll(json.getInterceptors())
+                }
             }
-            CreateFinalTransfer(codeGenerator, csFinalServices)
+            log("一共有${csFinalServices.size}个CsService ${csFinalInterceptor.size}个Interceptor")
+            CreateFinalTransfer(codeGenerator, csFinalServices, csFinalInterceptor)
                 .create()
             csFinish = true
         }

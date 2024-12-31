@@ -49,4 +49,8 @@ fun String.getServiceNodes():List<CsServiceNode>{
     return gson.fromJson(this,object :TypeToken<List<CsServiceNode>>(){}.type)
 }
 
+fun String.getInterceptors():List<CsInterceptorNode>{
+    return gson.fromJson(this,object :TypeToken<List<CsInterceptorNode>>(){}.type)
+}
+
 

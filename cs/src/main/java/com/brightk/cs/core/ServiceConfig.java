@@ -6,16 +6,16 @@ public class ServiceConfig {
     public final ServiceType type;
     public final Class<CsService> serviceClass;
 
-    public ServiceConfig(Class<CsService> service,ServiceType type){
+    public ServiceConfig(Class<CsService> service, ServiceType type) {
         this.serviceClass = service;
         this.type = type;
     }
 
-    public void setService(CsService service){
+    public void setService(CsService service) {
         this.service = service;
     }
 
-    public CsService getService(){
+    public CsService getService() {
         return service;
     }
 

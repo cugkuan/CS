@@ -40,29 +40,27 @@ public class CS {
     public static int CS_CODE_SERVICE_LACK_PARAMS = 502;
     public static int CS_CODE_SERVICE_CANCEL_FAILURE = 600;
 
+    /**
+     * 拦截器
+     */
+    public static int CS_CODE_INTERCEPTOR_FAILURE = 700;
+
 
     /**
-     *  服务自动注册的入口，通过ASM将代码注入到这里
+     * 服务自动注册的入口，通过ASM将代码注入到这里
      */
-    public static void init(){
+    public static void init() {
 
     }
 
 
     public static void call(UriRequest request, @Nullable OnRequestResultListener listener) {
-        CsService service = getService(request.getUri());
-        if (service != null) {
-            service.call(request, listener);
-        } else {
-            if (listener != null) {
-                listener.result(UriRespond.NOTFIND(request));
-            }
-        }
+        LogicCenter.call(request, listener);
     }
 
     public static @Nullable
     CsService getService(Uri uri) {
-        return CsServiceManger.getInstance().getService(uri);
+        return LogicCenter.getService(uri);
     }
 
     public static @Nullable

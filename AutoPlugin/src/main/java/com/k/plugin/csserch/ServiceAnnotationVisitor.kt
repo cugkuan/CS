@@ -3,14 +3,13 @@ package com.k.plugin.csserch
 import com.k.plugin.CsPluginUtils
 import com.k.plugin.CsServiceClassInfo
 import com.k.plugin.Logger
-import org.gradle.internal.impldep.org.apache.http.util.TextUtils
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.Opcodes
 
 /**
  * flag 跟库里面的约定保持一致性
  */
-internal class ServiceAnnotationVisitor(private val className: String) :
+internal class ServiceAnnotationVisitor(private val className: String,private val searchResultBack: (info:CsServiceClassInfo)->Unit) :
     AnnotationVisitor(Opcodes.ASM6) {
     private var url: String? = null
     private var flag = 'a'
@@ -43,10 +42,9 @@ internal class ServiceAnnotationVisitor(private val className: String) :
     override fun visitEnd() {
         super.visitEnd()
         url?.let { url ->
-            Logger.error("$className==>$url")
             val c = className + flag
             val classInfo = CsServiceClassInfo(c, url)
-            CsPluginUtils.csServiceClassInfoList.add(classInfo)
+            searchResultBack.invoke(classInfo)
         }
     }
 }

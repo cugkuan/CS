@@ -1,5 +1,7 @@
 package com.k.plugin.csinject
 
+import com.k.plugin.InterceptorClassInfo
+import com.k.plugin.CsServiceClassInfo
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.MethodVisitor
@@ -9,11 +11,12 @@ import org.objectweb.asm.Opcodes
  * 代码注入带 CS 的init方法 中
  * 使用的时间验证合法性
  */
-class CSInjectClassVisitor : ClassVisitor {
+class CSInjectClassVisitor(
+    writer: ClassWriter, private val services: List<CsServiceClassInfo>,
+    private val interceptors: List<InterceptorClassInfo>
+) : ClassVisitor(Opcodes.ASM9, writer) {
     private var className: String? = null
     private var signature: String? = null
-    constructor(classVisitor: ClassVisitor?) : super(Opcodes.ASM9, classVisitor)
-    constructor(writer: ClassWriter?) : super(Opcodes.ASM9, writer)
     override fun visit(
         version: Int,
         access: Int,
@@ -26,6 +29,7 @@ class CSInjectClassVisitor : ClassVisitor {
         className = name
         this.signature = signature
     }
+
     override fun visitMethod(
         access: Int,
         name: String,
@@ -35,7 +39,7 @@ class CSInjectClassVisitor : ClassVisitor {
     ): MethodVisitor? {
         val methodVisitor = super.visitMethod(access, name, descriptor, signature, exceptions)
         return if (name == "init") {
-            InjectTargetMethodVisitor(methodVisitor, access, name, descriptor)
+            InjectTargetMethodVisitor(methodVisitor, access, name, descriptor, services,interceptors)
         } else methodVisitor
     }
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Looper;
 
 import com.brightk.cs.CS;
+import com.brightk.cs.LogicCenter;
 import com.brightk.cs.core.OnRequestResultListener;
 import com.brightk.cs.core.UriRequest;
 import com.brightk.cs.core.UriRespond;
@@ -86,7 +87,7 @@ public class UriRequestBuild {
     }
 
     public void call(OnRequestResultListener listener) {
-        CS.call(build(), listener);
+        LogicCenter.call(build(), listener);
     }
 
     public void call() {
@@ -95,32 +96,7 @@ public class UriRequestBuild {
 
     public UriRespond connect() {
         UriRequest request = build();
-        AtomicReference<UriRespond> uriRespond = new AtomicReference<>();
-        CS.call(request, respond -> {
-            synchronized (request) {
-                if (respond == null){
-                    uriRespond.set(new UriRespond(CS.CS_CODE_RESPOND_NULL,new NullPointerException("Cs:组件服务中没有返回 respond")));
-                }else {
-                    uriRespond.set(respond);
-                }
-                request.notifyAll();
-            }
-        });
-        synchronized (request) {
-            while (uriRespond.get() == null) {
-                if (Thread.currentThread() == Looper.getMainLooper().getThread()) {
-                    throw new RuntimeException("Cs:不能在主线中进行这样的操作");
-                }
-                try {
-                    request.wait();
-                } catch (InterruptedException e) {
-                    uriRespond.set(new UriRespond(CS.CS_CODE_RESPOND_NULL,e));
-                    e.printStackTrace();
-
-                }
-            }
-        }
-        return uriRespond.get();
+        return LogicCenter.connect(request);
 
     }
 

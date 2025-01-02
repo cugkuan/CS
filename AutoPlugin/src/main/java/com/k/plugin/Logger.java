@@ -8,4 +8,8 @@ public class Logger {
         project.getLogger().error(msg);
     }
 
+    public static void info(String msg){
+        project.getLogger().info(msg);
+    }
+
 }

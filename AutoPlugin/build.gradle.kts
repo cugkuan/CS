@@ -1,48 +1,86 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
-    id("groovy") // Groovy Language
-    id("java-gradle-plugin") // Java Gradle Plugin
-    id("maven-publish")
-    kotlin("jvm") version "1.8.0"
+    `kotlin-dsl`
+    `java-gradle-plugin`
+    `maven-publish`
+    `signing`
 }
+val publicGroup = "top.brightk"
+val publicVersion = "2.0.0.12"
+val publicArtifact = "cs-plugin"
 
-gradlePlugin {
-    plugins.register("cs-plgin") {
-        id = "com.brightk.cs"
-        implementationClass = "com.k.plugin.CsPlugin"
-    }
+group = publicGroup
+version = publicVersion
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
-
 repositories {
-    maven {
-        credentials {
-            username = "qzdapp"
-            password = "Zhiyun123"
-        }
-        url = uri("http://maven.qizhidao.net:8081/repository/packages-app/app/android")
-        isAllowInsecureProtocol = true
-    }
     mavenCentral()
     google()
 }
-
 dependencies {
-    gradleApi()
-    localGroovy()
-    implementation("com.android.tools.build:gradle:7.3.0")
-    implementation("org.ow2.asm:asm:9.1")
-    implementation("org.ow2.asm:asm-commons:9.1")
-    implementation("com.android.tools:sdk-common:30.0.3")
+    implementation(libs.gradle.kotlin)
+    implementation(libs.gradle)
+    // asm
+    implementation(libs.asm.core)
+    implementation(libs.asm.commons)
+    implementation(libs.asm.util)
+    implementation(libs.asm.tree)
+    implementation(libs.asm.analysis)
 }
 
-
+apply(from = "${rootDir.parent}/gradle/publish.gradle.kts")
+val uploadRepository: Action<RepositoryHandler> by extra
 publishing {
     publications {
-        create<MavenPublication>("maven") {
-            groupId = "com.brightk.cs"
-            artifactId = "cs-plguin"
-            version = "0.2.1"
+        create<MavenPublication>("CsPlugin") {
+            artifactId = publicArtifact
+            groupId = publicGroup
+            version = publicVersion
             from(components["java"])
+            pom {
+                // public maven must
+                name.set("CS plugin")
+                description.set("CS plugin,work for CS;CS插件，服务拦截器自动注册")
+                val pomUrl = "https://github.com/cugkuan/CS"
+                val pomScm = "https://github.com/cugkuan/CS.git"
+                url.set(pomUrl)
+                licenses {
+                    license {
+                        name.set("The Apache Software License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("BrightK")
+                        name.set("BrightK")
+                        email.set("cugkuan@163.com")
+                    }
+                }
+                scm {
+                    connection.set(pomUrl)
+                    developerConnection.set(pomScm)
+                    url.set(pomUrl)
+                }
+            }
+        }
+    }
+    repositories(uploadRepository)
+}
+gradlePlugin {
+    plugins {
+        register("cs-plugin") {
+            id = "top.brightk.cs"
+            group = publicGroup
+            implementationClass = "com.k.plugin.CsPlugin"
         }
     }
 }
+afterEvaluate {
+    signing {
+        sign(publishing.publications)
+    }
+}
+

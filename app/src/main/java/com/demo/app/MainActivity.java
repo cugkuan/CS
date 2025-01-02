@@ -42,31 +42,22 @@ public class MainActivity extends AppCompatActivity {
 //                Toast.makeText(MainActivity.this, finalMsg,Toast.LENGTH_LONG).show();
 //            }
 //        });
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                       UriRespond respond = new UriRequestBuild( "app://app1/service2")
-                                .connect();
-                       String msg  = null;
-                       if (respond.code == CS.CS_CODE_SUCCEED){
-                           msg = respond.data.toString();
-                       }else {
-                           msg = respond.throwable.getMessage();
-                       }
-                        String finalMsg = msg;
-                        runOnUiThread(new Runnable() {
-                           @Override
-                           public void run() {
-                               Toast.makeText(MainActivity.this, finalMsg,Toast.LENGTH_LONG).show();
-                           }
-                       });
-                    }
-                }).start();
-            }
-        },2000);
+        new Handler().postDelayed(() -> new Thread(() -> {
+           UriRespond respond = new UriRequestBuild( "app://app1/service2")
+                    .connect();
+           String msg  = null;
+           if (respond.code == CS.CS_CODE_SUCCEED){
+               msg = respond.data.toString();
+           }else {
+               msg = respond.throwable.getMessage();
+           }
+            String finalMsg = msg;
+            runOnUiThread(() -> Toast.makeText(MainActivity.this, finalMsg,Toast.LENGTH_LONG).show());
+        }).start(),2000);
+
+    }
+
+    private void test(){
 
     }
 }

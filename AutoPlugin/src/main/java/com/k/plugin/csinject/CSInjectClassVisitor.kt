@@ -1,5 +1,6 @@
 package com.k.plugin.csinject
 
+import com.android.build.api.instrumentation.ClassContext
 import com.k.plugin.InterceptorClassInfo
 import com.k.plugin.CsServiceClassInfo
 import org.objectweb.asm.ClassVisitor
@@ -12,9 +13,9 @@ import org.objectweb.asm.Opcodes
  * 使用的时间验证合法性
  */
 class CSInjectClassVisitor(
-    writer: ClassWriter, private val services: List<CsServiceClassInfo>,
-    private val interceptors: List<InterceptorClassInfo>
-) : ClassVisitor(Opcodes.ASM9, writer) {
+    val classContext: ClassContext,
+    visitor: ClassVisitor
+) : ClassVisitor(Opcodes.ASM9, visitor) {
     private var className: String? = null
     private var signature: String? = null
     override fun visit(
@@ -39,7 +40,7 @@ class CSInjectClassVisitor(
     ): MethodVisitor? {
         val methodVisitor = super.visitMethod(access, name, descriptor, signature, exceptions)
         return if (name == "init") {
-            InjectTargetMethodVisitor(methodVisitor, access, name, descriptor, services,interceptors)
+            InjectTargetMethodVisitor(methodVisitor, access, name, descriptor)
         } else methodVisitor
     }
 }

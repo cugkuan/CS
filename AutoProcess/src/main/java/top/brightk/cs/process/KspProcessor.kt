@@ -9,7 +9,6 @@ import com.google.devtools.ksp.getAnnotationsByType
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
-import com.qizhidao.launchksp.processor.BaseProcessor
 import top.brightk.cs.process.annotation.CsInterceptorVisitor
 import top.brightk.cs.process.annotation.CsServiceVisitor
 import top.brightk.cs.process.create.CreateCsTransfer
@@ -45,8 +44,10 @@ class KspProcessor(environment: SymbolProcessorEnvironment) :
             interceptorAnnotation.forEach {
                 it.accept(csInterceptorVisitor, Unit)
             }
-            CreateCsTransfer(codeGenerator, csServices, csInterceptors)
-                .create()
+            if (csServices.isNotEmpty() || csInterceptors.isNotEmpty()) {
+                CreateCsTransfer(codeGenerator, csServices, csInterceptors)
+                    .create()
+            }
             isCsScan = false
             return ArrayList<KSAnnotated>().apply {
                 addAll(ksAnnotated.toList())

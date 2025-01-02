@@ -5,7 +5,7 @@ plugins {
     `signing`
 }
 val publicGroup = "top.brightk"
-val publicVersion = "2.0.0.12"
+val publicVersion = "3.0.0"
 val publicArtifact = "cs-plugin"
 
 group = publicGroup

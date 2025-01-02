@@ -1,6 +1,7 @@
 package com.k.plugin;
 
 import org.gradle.api.Project;
+import org.gradle.api.logging.LogLevel;
 
 public class Logger {
     static Project project;
@@ -9,7 +10,7 @@ public class Logger {
     }
 
     public static void info(String msg){
-        project.getLogger().info(msg);
+        project.getLogger().log(LogLevel.WARN,msg);
     }
 
 }

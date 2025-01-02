@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.ksp) apply false
 }
 
+
 subprojects {
     plugins.whenPluginAdded {
         when(this){

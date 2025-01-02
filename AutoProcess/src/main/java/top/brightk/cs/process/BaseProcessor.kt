@@ -1,4 +1,4 @@
-package com.qizhidao.launchksp.processor
+package top.brightk.cs.process
 
 import com.google.devtools.ksp.processing.CodeGenerator
 import com.google.devtools.ksp.processing.KSPLogger
@@ -6,7 +6,7 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import java.io.OutputStream
 
-abstract class BaseProcessor(protected val env: SymbolProcessorEnvironment) : SymbolProcessor {
+abstract class BaseProcessor(private val env: SymbolProcessorEnvironment) : SymbolProcessor {
     protected val codeGenerator: CodeGenerator = env.codeGenerator
     private val logger: KSPLogger = env.logger
     protected val options: Map<String, String> = env.options

@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "top.brightk"
-version = "1.0.0"
+version = "1.0.3"
 
 java {
     withJavadocJar()
@@ -21,7 +21,12 @@ dependencies{
     implementation(libs.cs.annotation)
     implementation(libs.gson)
 }
-apply(from = "${rootDir}/gradle/publish.gradle.kts")
+try {
+    apply(from = "${rootProject.rootDir.parent}/gradle/publish.gradle.kts")
+}catch (e:Exception){
+    apply(from = "${rootDir}/gradle/publish.gradle.kts")
+}
+
 val uploadRepository: Action<RepositoryHandler> by extra
 publishing {
     publications {
@@ -33,7 +38,7 @@ publishing {
             pom {
                 // public maven must
                 name.set("CS plugin")
-                description.set("CS plugin,work for CS;Ksp插件，使用ksp加快出来速度")
+                description.set("CS ksp,work for CS;Ksp插件，使用ksp加快编译速度")
                 val pomUrl = "https://github.com/cugkuan/CS"
                 val pomScm = "https://github.com/cugkuan/CS.git"
                 url.set(pomUrl)

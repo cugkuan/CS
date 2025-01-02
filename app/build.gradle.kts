@@ -4,6 +4,10 @@ plugins {
     alias(libs.plugins.cs.plugin)
 }
 
+ksp{
+    arg("application","true")
+}
+
 android {
     compileSdk = 34
     defaultConfig {
@@ -35,7 +39,6 @@ android {
     }
     namespace = "com.demo.app"
 }
-
 dependencies {
 
     implementation(libs.appcompat)

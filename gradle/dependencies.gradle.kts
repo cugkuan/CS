@@ -1,8 +1,12 @@
 import java.util.Properties
 
-val file = File("./local.properties")
 val properties = Properties().apply {
-    load(file.inputStream())
+    try {
+        load(File("./local.properties").inputStream())
+    }catch (e:Exception){
+
+    }
+
 }
 val testUrl :String by  properties
 val testName :String  by  properties

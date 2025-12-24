@@ -6,9 +6,9 @@ commons-io-commons-io3 = "2.13.0"
 commons-codec-commons-codec3 = "1.15"
 com-android-tools-sdk-common2 = "31.7.2"
 constraintlayout = "2.1.4"
-gradle = "7.4.2"
+gradle = "8.9.0"
 gradle-kotlin = "2.0.0"
-gradle-android = "7.4.2"
+gradle-android = "8.9.0"
 gradle-ksp = "2.0.21-1.0.25"
 # android
 androidx-core-ktx = "1.8.0"
@@ -93,3 +93,5 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "gradle-ko
 ksp = { id = "com.google.devtools.ksp", version.ref = "gradle-ksp" }
 launch-plugin = { id = "com.qizhidao.launch", version.ref = "launch-plugin" }
 cs-plugin = { id = "top.brightk.cs", version.ref = "cs-plugin" }
+
+publish = { id = "com.vanniktech.maven.publish", version = "0.30.0" }

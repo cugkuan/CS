@@ -15,7 +15,7 @@ class CreateFinalTransfer(
 
     fun create() {
         codeGenerator.createNewFile(
-            Dependencies(false),
+            Dependencies(true),
             CS_TRANSFER_FINIAL, CS_TRANSFER_FINIAL_CLASS, "java"
         )
             .use { stream ->

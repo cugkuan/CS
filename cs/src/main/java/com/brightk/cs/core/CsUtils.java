@@ -18,12 +18,11 @@ public class CsUtils {
     }
 
     public static String getKey(Uri uri) {
-        return new StringBuilder()
-                .append(checkNull(uri.getScheme()))
-                .append("-")
-                .append(checkNull(uri.getAuthority()))
-                .append("-")
-                .append(checkNull(uri.getPath())).toString();
+        return checkNull(uri.getScheme()) +
+                "-" +
+                checkNull(uri.getAuthority()) +
+                "-" +
+                checkNull(uri.getPath());
     }
 
     public static String getKey(String url) {

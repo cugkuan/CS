@@ -1,18 +1,28 @@
 
 pluginManagement {
-    apply(from = "gradle/dependencies.gradle.kts")
-    val settingsRepository : Action<RepositoryHandler> by extra
-    repositories(settingsRepository)
+    repositories {
+        mavenLocal()
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        maven {
+            url = uri("https://jitpack.io")
+        }
+    }
 }
-
 @Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    apply(from = "gradle/dependencies.gradle.kts")
-    val settingsRepository : Action<RepositoryHandler> by extra
-    repositories(settingsRepository)
+    repositories {
+        mavenLocal()
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+        maven {
+            url = uri("https://jitpack.io")
+        }
+    }
 }
-
 
 rootProject.name = "Cs"
 includeBuild("AutoPlugin")

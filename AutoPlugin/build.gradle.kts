@@ -30,8 +30,6 @@ dependencies {
     implementation(libs.asm.analysis)
 }
 
-apply(from = "${rootDir.parent}/gradle/publish.gradle.kts")
-val uploadRepository: Action<RepositoryHandler> by extra
 publishing {
     publications {
         create<MavenPublication>("CsPlugin") {
@@ -67,7 +65,17 @@ publishing {
             }
         }
     }
-    repositories(uploadRepository)
+    repositories {
+        maven {
+            val releasesRepoUrl = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            val snapshotsRepoUrl = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+            credentials {
+                username = System.getenv("OSSRH_USERNAME")
+                password = System.getenv("OSSRH_PASSWORD")
+            }
+        }
+    }
 }
 gradlePlugin {
     plugins {
@@ -78,9 +86,14 @@ gradlePlugin {
         }
     }
 }
+
 afterEvaluate {
-    signing {
-        sign(publishing.publications)
+    val pgpKey = System.getenv("SIGNING_PGP_KEY")
+    if (pgpKey != null) {
+        signing {
+            val password = System.getenv("SIGNING_PASSWORD")
+            useInMemoryPgpKeys(pgpKey, password)
+            sign(publishing.publications)
+        }
     }
 }
-

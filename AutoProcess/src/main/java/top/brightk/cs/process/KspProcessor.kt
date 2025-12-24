@@ -26,10 +26,13 @@ const val CS_TRANSFER_IMPORT_INTERCEPTOR = "com.brightk.cs.core.annotation.KspBr
 class KspProcessor(environment: SymbolProcessorEnvironment) :
     BaseProcessor(environment) {
     private var isCsScan: Boolean = true
-    private var csFinish = false
     @OptIn(KspExperimental::class)
     override fun process(resolver: Resolver): List<KSAnnotated> {
         log(resolver.getModuleName().asString())
+        val internalModuleName = resolver.getModuleName().asString()
+            .replace("-", "_")
+            .replace(".", "_")
+
         if (isCsScan) {
             val csServices = ArrayList<CsServiceNode>()
             val csInterceptors = ArrayList<CsInterceptorNode>()
@@ -45,7 +48,12 @@ class KspProcessor(environment: SymbolProcessorEnvironment) :
                 it.accept(csInterceptorVisitor, Unit)
             }
             if (csServices.isNotEmpty() || csInterceptors.isNotEmpty()) {
-                CreateCsTransfer(codeGenerator, csServices, csInterceptors)
+                CreateCsTransfer(
+                    internalModuleName = internalModuleName,
+                    codeGenerator,
+                    csServices,
+                    csInterceptors
+                )
                     .create()
             }
             isCsScan = false
@@ -54,26 +62,7 @@ class KspProcessor(environment: SymbolProcessorEnvironment) :
                 addAll(interceptorAnnotation.toList())
             }
         }
-        val application = options["application"]
-        if (application == "true" && !csFinish) {
-            val csFinalServices = ArrayList<CsServiceNode>()
-            val csFinalInterceptor = ArrayList<CsInterceptorNode>()
-            resolver.getDeclarationsFromPackage(CS_TRANSFER_PACKET).forEach { declaration ->
-                declaration.getAnnotationsByType(KspBridgeService::class).forEach { node ->
-                    val json = node.json
-                    csFinalServices.addAll(json.getServiceNodes())
-                }
-                declaration.getAnnotationsByType(KspBridgeInterceptor::class).forEach { node ->
-                    val json = node.json
-                    csFinalInterceptor.addAll(json.getInterceptors())
-                }
-            }
-            log("一共有${csFinalServices.size}个CsService ${csFinalInterceptor.size}个Interceptor")
-            CreateFinalTransfer(codeGenerator, csFinalServices, csFinalInterceptor)
-                .create()
-            csFinish = true
-        }
-        return emptyList()
+        return  emptyList()
     }
 
     override fun finish() {

@@ -25,13 +25,13 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Cs"
-includeBuild("AutoPlugin")
+//includeBuild("AutoPlugin")
 
-include(":app")
-include(":cs")
+//include(":app")
+//include(":cs")
 //includeBuild("cs-annotation")
-include(":test1")
-include(":test2")
+//include(":test1")
+//include(":test2")
 include(":AutoProcess")
 
 

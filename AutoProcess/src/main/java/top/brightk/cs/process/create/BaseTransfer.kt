@@ -5,11 +5,6 @@ import java.io.OutputStream
 import java.util.UUID
 
 abstract  class BaseTransfer {
-
-    protected fun getCreateName():String{
-       return "Cs_"+UUID.randomUUID().toString().md5()
-    }
-
     protected fun OutputStream.appendText(str: String) {
         write(str.toByteArray())
     }

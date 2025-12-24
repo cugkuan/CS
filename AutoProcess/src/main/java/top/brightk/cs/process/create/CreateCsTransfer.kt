@@ -17,7 +17,7 @@ class CreateCsTransfer(
     private val csInterceptorNodes: List<CsInterceptorNode>
 ) : BaseTransfer() {
     fun create() {
-        val className = "Cs_${internalModuleName}_${csService.size}"
+        val className = "Cs_Middle_${internalModuleName}"
         codeGenerator.createNewFile(Dependencies(false), CS_TRANSFER_PACKET, className, "kt")
             .use { stream ->
                 with(stream) {
